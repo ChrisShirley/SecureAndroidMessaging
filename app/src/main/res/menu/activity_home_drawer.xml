@@ -3,15 +3,15 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/transfer"
             android:icon="@drawable/ic_menu_camera"
             android:title="Key Transfer" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/contacts"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Friends" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/message"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Messenger" />
         <item
@@ -20,7 +20,7 @@
             android:title="Tools" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Communicate" android:visible="false">
         <menu>
             <item
                 android:id="@+id/nav_share"
