@@ -4,32 +4,28 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/transfer"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_transfer"
             android:title="Key Transfer" />
         <item
             android:id="@+id/contacts"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Friends" />
-        <item
-            android:id="@+id/message"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Messenger" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:icon="@drawable/ic_menu_contacts"
+            android:title="Contacts" />
+
     </group>
 
-    <item android:title="Communicate" android:visible="false">
+
+
+
+    <item android:title="Tools">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/Settings"
+                android:icon="@drawable/ic_menu_settings"
+                android:title="Settings" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_help"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Help" />
         </menu>
     </item>
 
