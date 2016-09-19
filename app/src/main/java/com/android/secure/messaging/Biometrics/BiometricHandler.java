@@ -13,4 +13,8 @@ public class BiometricHandler {
         return false;
     }
 
+    boolean grantAccess() {
+        return false;
+    }
+
 }
