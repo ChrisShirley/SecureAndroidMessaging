@@ -21,7 +21,19 @@ public class NFCHandlerTest {
     @Test
     public void deviceHasNFC() throws Exception {
 
-        TestCase.assertTrue(NFCHandler.deviceHasNFC());
+        TestCase.assertTrue(nfcHandler.deviceHasNFC());
+    }
+
+    @Test
+    public void accept() throws Exception {
+
+        TestCase.assertTrue(nfcHandler.accept());
+    }
+
+    @Test
+    public void request() throws Exception {
+
+        TestCase.assertTrue(nfcHandler.request());
     }
 
 }
