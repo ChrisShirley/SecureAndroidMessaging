@@ -18,6 +18,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <uses-permission android:name="android.permission.NFC" />
+
+        <uses-feature
+            android:name="android.hardware.nfc"
+            android:required="true" />
+
+        <activity
+            android:launchMode="singleTask"
+            android:name=".NFCActivity"
+            android:label="@string/title_activity_nfc"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>
