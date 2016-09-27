@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
-import android.widget.Toast;
+import android.app.Activity;
 
 /**
  * Created by christophershirley on 9/17/16.
@@ -29,10 +29,10 @@ public class NFCHandler {
         }
     };
 
-    public NFCHandler(Context ctx)
+    public NFCHandler(Context ctx,NfcAdapter adapter)
     {
         context = ctx;
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(context);
+        mNfcAdapter = adapter;
     }
 
     public boolean deviceHasNFC()
@@ -46,10 +46,14 @@ public class NFCHandler {
         return false;
     }
 
+
+
     public boolean isNFCEnabled()
     {
-        if(mNfcAdapter.isEnabled())
+        if(mNfcAdapter.isEnabled()) {
+
             return true;
+        }
         else {
              AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setMessage("NFC not enabled. Please enable NFC to continue and try again.").setPositiveButton("Continue", dialogClickListener)

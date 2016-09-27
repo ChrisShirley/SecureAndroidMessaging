@@ -14,6 +14,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
@@ -58,9 +59,9 @@ public class Keys {
             publicKey = pair.getPublic();
             privateKey = pair.getPrivate();
             byte[] publicKeyBytes = publicKey.getEncoded();
-            String publicKeyString = new String(Base64.encode(publicKeyBytes,Base64.NO_PADDING));
+            String publicKeyString = new String(Base64.encode(publicKeyBytes,Base64.DEFAULT));
             byte[] privateKeyBytes = privateKey.getEncoded();
-            String privateKeyString = new String(Base64.encode(privateKeyBytes,Base64.NO_PADDING));
+            String privateKeyString = new String(Base64.encode(privateKeyBytes,Base64.DEFAULT));
             editor.putString("PublicKey", publicKeyString);
             editor.putString("PrivateKey", privateKeyString);
             editor.commit();
@@ -74,7 +75,7 @@ public class Keys {
 
     public PublicKey getPublicKey(){
         String publicKeyString = sharedPreferences.getString("PublicKey", "");
-        byte[] sigBytes = Base64.decode(publicKeyString,Base64.NO_PADDING);
+        byte[] sigBytes = Base64.decode(publicKeyString,Base64.DEFAULT);
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(sigBytes);
         KeyFactory keyFactory = null;
         try {
@@ -96,8 +97,8 @@ public class Keys {
     }
     public PrivateKey getPrivateKey(){
         String privateKeyString = sharedPreferences.getString("PrivateKey", "");
-        byte[] sigBytes = Base64.decode(privateKeyString,Base64.NO_PADDING);
-        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(sigBytes);
+        byte[] sigBytes = Base64.decode(privateKeyString,Base64.DEFAULT);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(sigBytes);
         KeyFactory keyFactory = null;
         try {
             keyFactory = KeyFactory.getInstance("RSA", "BC");
@@ -107,7 +108,7 @@ public class Keys {
             e.printStackTrace();
         }
         try {
-            return  keyFactory.generatePrivate(x509KeySpec);
+            return  keyFactory.generatePrivate(keySpec);
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         }
