@@ -1,12 +1,9 @@
 package com.android.secure.messaging;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.RequiresPermission;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,12 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.android.secure.messaging.Biometrics.BiometricHandler;
 
+import com.android.secure.messaging.keys.Keys;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static Keys keys;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +27,7 @@ public class Home extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_new_msg);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,10 +45,8 @@ public class Home extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //Added 9/26/16 - Ryan Silan - Checking for biometric availability and if user has fingerprints enrolled.
-        BiometricHandler biometricHandler = new BiometricHandler(this);
-        biometricHandler.isBiometricsAvailable();
-        biometricHandler.isBiometricsEnabled();
+        keys = Keys.getInstance();
+        keys.getKeys(this.getApplicationContext());
     }
 
     @Override
@@ -92,8 +88,10 @@ public class Home extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.transfer) {
-            // Handle transfer action
+            Intent intent = new Intent(this, NFCActivity.class);
+            startActivity(intent);
         } else if (id == R.id.contacts) {
+
 
         } else if (id == R.id.Settings) {
 
