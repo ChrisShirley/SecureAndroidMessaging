@@ -9,16 +9,5 @@ import javax.crypto.KeyGenerator;
  */
 public class BiometricCipher {
 
-    private KeyStore keyStore;
-    private KeyGenerator keyGenerator;
 
-    public void generateKey() {
-
-        try {
-            keyStore = KeyStore.getInstance("AndroidKeyStore");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 }
