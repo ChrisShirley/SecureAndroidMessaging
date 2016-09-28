@@ -1,5 +1,6 @@
 package com.android.secure.messaging;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -53,13 +54,19 @@ public class NFCActivity extends AppCompatActivity implements NfcAdapter.CreateN
     public NdefMessage createNdefMessage(NfcEvent event) {
         String text = ("Beam me up, Android!\n\n" +
                 "Beam Time: " + System.currentTimeMillis());
-        NdefMessage msg = new NdefMessage( NdefRecord.createApplicationRecord(getPackageName()));
+        NdefMessage msg = new NdefMessage( NdefRecord.createApplicationRecord(text));
         return msg;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        PendingIntent pi = PendingIntent.getActivity(
+                this,
+                0,
+                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                0);
+        mNfcAdapter.enableForegroundDispatch(this, pi, null, null);
         // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());

@@ -3,6 +3,9 @@
     package="com.android.secure.messaging">
 
     <uses-permission android:name="android.permission.NFC" />
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="true" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,12 +24,10 @@
 
 
 
-        <uses-feature
-            android:name="android.hardware.nfc"
-            android:required="true" />
+
 
         <activity
-            android:launchMode="singleTask"
+
             android:name=".NFCActivity"
             android:label="@string/title_activity_nfc"
             android:theme="@style/AppTheme.NoActionBar">
