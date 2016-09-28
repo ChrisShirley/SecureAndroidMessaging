@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.app.Activity;
+import android.widget.Toast;
 
 /**
  * Created by christophershirley on 9/17/16.
@@ -51,7 +52,7 @@ public class NFCHandler {
     public boolean isNFCEnabled()
     {
         if(mNfcAdapter.isEnabled()) {
-
+            Toast.makeText(context,"NFC Activated. Places devices back to back to begin transfer.",Toast.LENGTH_LONG).show();
             return true;
         }
         else {
