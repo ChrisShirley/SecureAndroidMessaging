@@ -25,10 +25,12 @@ public class BiometricCipher {
     private String mKeyName;
     private KeyStore mKeyStore;
 
+    //Constructor for BiometricCipher class, sets references for mKeyStore and mKeyName
     public BiometricCipher(KeyStore keyStore, String keyName){
         mKeyStore = keyStore;
         mKeyName = keyName;
     }
+
 
     public boolean initCipher() {
         try {
@@ -41,6 +43,7 @@ public class BiometricCipher {
         } catch (NoSuchPaddingException e) {
             throw new RuntimeException("Failed to get cipher", e);
         }
+
 
         try {
             mKeyStore.load(null);
