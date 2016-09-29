@@ -15,7 +15,7 @@ public class NFCHandlerTest {
     NFCHandler nfcHandler;
     @Before
     public void setUp() throws Exception {
-        nfcHandler = new NFCHandler();
+        //nfcHandler = new NFCHandler();
     }
 
     @Test
