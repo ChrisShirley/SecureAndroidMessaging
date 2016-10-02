@@ -21,6 +21,7 @@ public class BiometricKeyGenerator {
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
 
+
     public void generateKey() {
 
         try {
@@ -46,5 +47,13 @@ public class BiometricKeyGenerator {
         } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | CertificateException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public KeyStore getKeyStore(){
+        return keyStore;
+    }
+
+    public String getBiometricKey(){
+        return biometricKey;
     }
 }

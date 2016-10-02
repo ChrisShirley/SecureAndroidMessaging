@@ -4,6 +4,8 @@ package com.android.secure.messaging.Biometrics;
  * Created by silanr on 9/19/2016.
  */
 
+import android.content.Context;
+
 import junit.framework.TestCase;
 
 import org.junit.Before;

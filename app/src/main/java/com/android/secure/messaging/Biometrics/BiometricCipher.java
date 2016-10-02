@@ -58,4 +58,8 @@ public class BiometricCipher {
             throw new RuntimeException("Failed to init cipher", e);
         }
     }
+
+    public Cipher getCipher(){
+        return cipher;
+    }
 }
