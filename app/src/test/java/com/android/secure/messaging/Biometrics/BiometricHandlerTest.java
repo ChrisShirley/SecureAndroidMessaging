@@ -17,7 +17,7 @@ public class BiometricHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        biometricHandler = new BiometricHandler();
+        //biometricHandler = new BiometricHandler();
     }
 
     @Test
