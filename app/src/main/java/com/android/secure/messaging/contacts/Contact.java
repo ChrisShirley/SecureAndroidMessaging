@@ -7,24 +7,48 @@ import android.os.Bundle;
  */
 public class Contact {
 
-    Contact(Bundle bundle)
+    private final String NAME_KEY = "name";
+    private final String EMAIL_KEY = "email";
+    private final String PUBLIC_KEY = "pkey";
+
+    private String name;
+    private String email;
+    private String key;
+
+    public Contact()
     {
 
     }
 
-    String getName()
+    public Contact(Bundle bundle)
     {
-        return null;
+        name = bundle.getString(NAME_KEY);
+        email = bundle.getString(EMAIL_KEY);
+        key = bundle.getString(PUBLIC_KEY);
+
     }
 
-    String getEmail()
+    public Contact (String n, String e, String k)
     {
-        return null;
+        name = n;
+        email = e;
+        key = k;
     }
 
-    String getKey()
+
+    public String getName()
     {
-        return null;
+        return name;
+    }
+
+    public String getEmail()
+    {
+        return email;
+    }
+
+    public String getKey()
+    {
+        return key;
     }
 
 }

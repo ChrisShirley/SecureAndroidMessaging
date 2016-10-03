@@ -21,20 +21,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.secure.messaging.contacts.ContactHandler;
 import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.nfc.NFCHandler;
 
-import static com.android.secure.messaging.R.id.textView;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NfcAdapter.CreateNdefMessageCallback {
 
     private static Keys keys;
-    private static NFCHandler nfcHandler;
+    private  NFCHandler nfcHandler;
     private static NfcAdapter mNfcAdapter;
+    private static ContactHandler contactHandler;
+    private NdefMessage msg;
+    private  EditText input;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,9 @@ public class Home extends AppCompatActivity
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcHandler = new NFCHandler(this,mNfcAdapter);
         mNfcAdapter.setNdefPushMessageCallback(this, this);
+
+        contactHandler = new ContactHandler();
+
     }
 
 
@@ -83,8 +89,8 @@ public class Home extends AppCompatActivity
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         String text = ("Public Key: "+keys.getPublicKeyAsString());
-        NdefMessage msg = new NdefMessage( NdefRecord.createApplicationRecord(text));
-        return msg;
+        return new NdefMessage( NdefRecord.createApplicationRecord(text));
+
     }
 
 
@@ -114,12 +120,13 @@ public class Home extends AppCompatActivity
         Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
                 NfcAdapter.EXTRA_NDEF_MESSAGES);
         // only one message sent during the beam
-        NdefMessage msg = (NdefMessage) rawMsgs[0];
+         msg = (NdefMessage) rawMsgs[0];
         // record 0 contains the MIME type, record 1 is the AAR, if present
         //Toast.makeText(this,new String(msg.getRecords()[0].getPayload()),Toast.LENGTH_LONG).show();
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(new String(msg.getRecords()[0].getPayload())).setPositiveButton("Continue", dialogClickListener)
-                .setNegativeButton("Cancel", dialogClickListener).show();
+
+
+        createAlert();
+
     }
 
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -127,8 +134,14 @@ public class Home extends AppCompatActivity
         public void onClick(DialogInterface dialog, int which) {
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
+                  /*  if(input.getText().length()==0) {
+                        Toast.makeText(getApplicationContext(), "Contact must have a name in order to be saved. Please name your contact or cancel.", Toast.LENGTH_LONG).show();
 
-                    break;
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Name: " + input.getText() + " Key: " + new String(msg.getRecords()[0].getPayload()), Toast.LENGTH_LONG).show();
+                        break;
+                    }*/break;
 
                 case DialogInterface.BUTTON_NEGATIVE:
                     //No button clicked
@@ -136,6 +149,49 @@ public class Home extends AppCompatActivity
             }
         }
     };
+
+
+
+    public void createAlert()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Contact");
+
+// Set an EditText view to get user input
+        input = new EditText(this);
+        builder.setView(input);
+
+        builder.setMessage("New Contact Received! Please name your contact.").setPositiveButton("Continue", dialogClickListener)
+                .setNegativeButton("Cancel", dialogClickListener);
+
+        final AlertDialog contactDialog = builder.create();
+        contactDialog.show();
+
+        contactDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Boolean wantToCloseDialog = (input.getText().toString().trim().isEmpty());
+                // if EditText is empty disable closing on possitive button
+                if (!wantToCloseDialog) {
+                    Toast.makeText(getApplicationContext(), "Name: " + input.getText() + " Key: " + new String(msg.getRecords()[0].getPayload()), Toast.LENGTH_LONG).show();
+                    contactDialog.dismiss();
+                }
+                else {
+
+                    Toast.makeText(getApplicationContext(), "Contact must have a name in order to be saved. Please name your contact or cancel.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        contactDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                    contactDialog.dismiss();
+            }
+        });
+
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

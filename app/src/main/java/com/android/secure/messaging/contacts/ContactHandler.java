@@ -7,13 +7,14 @@ import android.os.Bundle;
  */
 public class ContactHandler {
 
-    ContactHandler()
+    public ContactHandler()
     {
 
     }
 
-    boolean saveContact(Bundle bundle)
+    public boolean saveContact(Bundle bundle)
     {
+        Contact contact = new Contact(bundle);
         return false;
     }
 
