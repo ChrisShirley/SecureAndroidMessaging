@@ -4,8 +4,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
+import android.os.CancellationSignal;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.os.CancellationSignal;
+
 import android.widget.Toast;
 
 /**
@@ -45,5 +46,9 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     @Override
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
         Toast.makeText(mContext, "Successful Authentication!", Toast.LENGTH_LONG).show();
+    }
+
+    public CancellationSignal getCancellationSignal() {
+        return cancellationSignal;
     }
 }

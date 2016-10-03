@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.os.CancellationSignal;
 
 /**
@@ -30,6 +31,8 @@ public class BiometricHandler extends Activity {
     }
 
     public boolean isBiometricsAvailable() {
+
+        ContextCompat.checkSelfPermission(mContext,Manifest.permission.USE_FINGERPRINT);
         biometricsAvailable = mFingerprintManager.isHardwareDetected();
         System.out.println("Device has fingerprint scanner: " + biometricsAvailable);
         return biometricsAvailable;
