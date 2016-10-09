@@ -36,6 +36,7 @@ public class DAO {
     public DAO(Context c) {
         dbHelper = new DatabaseHelper(c);
         context = c;
+
     }
 
     public void open() throws SQLException {
@@ -59,8 +60,9 @@ public class DAO {
         }
     }
 
-    public void saveContact(Contact contact)
+    public boolean saveContact(Contact contact)
     {
+        open();
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.NAME, contact.getName());
         values.put(DatabaseHelper.EMAIL, contact.getEmail());
@@ -68,7 +70,11 @@ public class DAO {
 
         long id = database.insert(DatabaseHelper.TABLE_CONTACTS, null,
                 values);
-
+        close();
+        if(id==-1)
+            return false;
+        else
+            return true;
 
 
     }

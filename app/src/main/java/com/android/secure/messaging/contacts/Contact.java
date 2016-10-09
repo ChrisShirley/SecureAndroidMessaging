@@ -20,13 +20,13 @@ public class Contact {
 
     }
 
-    public Contact(Bundle bundle)
+    /*public Contact(Bundle bundle)
     {
         name = bundle.getString(NAME_KEY);
         email = bundle.getString(EMAIL_KEY);
         key = bundle.getString(PUBLIC_KEY);
 
-    }
+    }*/
 
     public Contact (String n, String e, String k)
     {

@@ -36,6 +36,7 @@ public class Home extends AppCompatActivity
     private  NFCHandler nfcHandler;
     private static NfcAdapter mNfcAdapter;
     private static ContactHandler contactHandler;
+
     private NdefMessage msg;
     private  EditText input;
 
@@ -71,7 +72,7 @@ public class Home extends AppCompatActivity
         nfcHandler = new NFCHandler(this,mNfcAdapter);
         mNfcAdapter.setNdefPushMessageCallback(this, this);
 
-        contactHandler = new ContactHandler();
+        contactHandler = new ContactHandler(this);
 
     }
 
@@ -157,7 +158,7 @@ public class Home extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add Contact");
 
-// Set an EditText view to get user input
+        // Set an EditText view to get user input
         input = new EditText(this);
         builder.setView(input);
 
@@ -174,6 +175,7 @@ public class Home extends AppCompatActivity
                 // if EditText is empty disable closing on possitive button
                 if (!wantToCloseDialog) {
                     Toast.makeText(getApplicationContext(), "Name: " + input.getText() + " Key: " + new String(msg.getRecords()[0].getPayload()), Toast.LENGTH_LONG).show();
+                    contactHandler.saveContact(input.getText().toString(),"test@test.com", new String(msg.getRecords()[0].getPayload()));
                     contactDialog.dismiss();
                 }
                 else {
@@ -221,8 +223,7 @@ public class Home extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.transfer) {
-            //Intent intent = new Intent(this, NFCActivity.class);
-            //startActivity(intent);
+
             startNFCHandler();
         } else if (id == R.id.contacts) {
 

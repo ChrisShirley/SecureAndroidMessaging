@@ -31,11 +31,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     private static final String CONTACT_TABLE_CREATE = "create table "
-            + TABLE_CONTACTS + "(" + CONTACT_ID
-            + " integer primary key autoincrement, " +
+            + TABLE_CONTACTS + "(" +
             NAME + " text not null, "+
             EMAIL +" text not null, "+
-            PKEY +" text not null);";
+            PKEY +" text PRIMARY KEY);";
 
 
     public DatabaseHelper(Context context) {
