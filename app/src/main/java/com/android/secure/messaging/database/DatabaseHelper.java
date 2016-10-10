@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String PKEY = "pkey";
 
 
-    private static final String DATABASE_NAME = "mobs.db";
+    private static final String DATABASE_NAME = "contacts.db";
     private static final int DATABASE_VERSION = 1;
 
 
