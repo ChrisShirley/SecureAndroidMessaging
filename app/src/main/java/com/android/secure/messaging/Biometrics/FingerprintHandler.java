@@ -21,6 +21,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     public FingerprintHandler(Context context){
         mContext = context;
     }
+
     public void startAuthentication(FingerprintManager fingerprintManager, FingerprintManager.CryptoObject cryptoObject){
 
         cancellationSignal = new CancellationSignal();
