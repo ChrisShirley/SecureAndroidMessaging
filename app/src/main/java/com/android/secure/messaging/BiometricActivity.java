@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.android.secure.messaging.Biometrics.BiometricCipher;
 import com.android.secure.messaging.Biometrics.BiometricKeyGenerator;
 import com.android.secure.messaging.Biometrics.FingerprintHandler;
+import com.android.secure.messaging.email.APIHandler;
 
 public class BiometricActivity extends AppCompatActivity {
 
@@ -23,8 +24,10 @@ public class BiometricActivity extends AppCompatActivity {
     BiometricCipher biometricCipher;
     FingerprintHandler fingerprintHandler;
 
+    APIHandler apiHandler = new APIHandler();
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_biometric);
 
@@ -33,12 +36,17 @@ public class BiometricActivity extends AppCompatActivity {
         biometricKeyGenerator.generateKey();
         biometricCipher = new BiometricCipher(biometricKeyGenerator.getKeyStore(),biometricKeyGenerator.getBiometricKey());
 
-
-        System.out.println("Key: " + biometricKeyGenerator.getBiometricKey());
-        System.out.println("KeyStore: " + biometricKeyGenerator.getKeyStore());
+        try {
+            apiHandler.getTimeStamp();
+            apiHandler.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //System.out.println("Key: " + biometricKeyGenerator.getBiometricKey());
+       // System.out.println("KeyStore: " + biometricKeyGenerator.getKeyStore());
 
         if(biometricCipher.initCipher()){
-            System.out.println("Got into the biometricCipher.initCipher() if loop");
+         //   System.out.println("Got into the biometricCipher.initCipher() if loop");
             Toast.makeText(this, "In the loop", Toast.LENGTH_LONG).show();
             cryptoObject = new FingerprintManager.CryptoObject(biometricCipher.getCipher());
             fingerprintHandler = new FingerprintHandler(this);
