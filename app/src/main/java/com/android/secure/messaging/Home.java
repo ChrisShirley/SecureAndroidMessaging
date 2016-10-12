@@ -257,8 +257,5 @@ public class Home extends AppCompatActivity
             nfcHandler.isNFCEnabled();
     }
 
-    public static ContactHandler getContactHandler()
-    {
-        return contactHandler;
-    }
+
 }

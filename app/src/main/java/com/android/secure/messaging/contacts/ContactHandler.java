@@ -35,5 +35,7 @@ public class ContactHandler {
        List<Contact> contacts =  dao.getAllContacts();
         return contacts;
     }
+
+    public static DAO getDAO(){return dao;}
 }
 
