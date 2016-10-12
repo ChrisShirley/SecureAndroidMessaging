@@ -24,21 +24,25 @@ public class APIHandler extends AsyncTask<String, Void, String> {
     final private String secretKey = "rWAcPx6YAAcgviM7BlouEW2Pgf5hC6uWctdLmFgS";
     final private String userAgent = "Rackspace Management Interface";
     final private String apiURL = "https://api.emailsrvr.com/v1/";
-    String formattedDate;
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddkkmmss", Locale.ENGLISH);
-    Date date = new Date();
-    String combinedSignature;
-    String hashedSignature;
+    private String formattedDate;
+    final private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddkkmmss", Locale.ENGLISH);
+    private Date date = new Date();
+    private String combinedSignature;
+    private String hashedSignature;
 
-    public APIHandler() {
-
-    }
-
+    /*
+    In order to access the API, the timestamp must be formatted in the following format:
+    <year><month><day><hour><minute><second>. This method converts the current timestamp
+    to the correct format.
+    */
     private void formatDate() {
         formattedDate = simpleDateFormat.format(date.getTime());
         System.out.println("This is the date: " + formattedDate);
     }
 
+    /*
+    Create signature that will eventually be hashed and passed via API to authenticate
+     */
     private String createSignature() {
         combinedSignature = userKey + userAgent + formattedDate + secretKey;
         return combinedSignature;
@@ -69,7 +73,9 @@ public class APIHandler extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
 
         String signature = null;
+        String name = params[0];
         URL url;
+
         try {
             formatDate();
             createSignature();
@@ -78,7 +84,7 @@ public class APIHandler extends AsyncTask<String, Void, String> {
             HttpsURLConnection urlConnection = null;
 
             // url = new URL("https://api.emailsrvr.com/v1/customers/me/domains");
-            url = new URL("https://api.emailsrvr.com/v1/customers/1948717/domains/secureandroidmessaging.com/rs/mailboxes/testact");
+            url = new URL("https://api.emailsrvr.com/v1/customers/1948717/domains/secureandroidmessaging.com/rs/mailboxes/" + name);
             String param = "password=Today123";
             urlConnection = (HttpsURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");

@@ -23,8 +23,8 @@ public class BiometricActivity extends AppCompatActivity {
     BiometricKeyGenerator biometricKeyGenerator = new BiometricKeyGenerator();
     BiometricCipher biometricCipher;
     FingerprintHandler fingerprintHandler;
-
     APIHandler apiHandler = new APIHandler();
+    String params;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -37,8 +37,8 @@ public class BiometricActivity extends AppCompatActivity {
         biometricCipher = new BiometricCipher(biometricKeyGenerator.getKeyStore(),biometricKeyGenerator.getBiometricKey());
 
         try {
-            apiHandler.getTimeStamp();
-            apiHandler.execute();
+            String params = new String("ryantest");
+            apiHandler.execute(params);
         } catch (Exception e) {
             e.printStackTrace();
         }
