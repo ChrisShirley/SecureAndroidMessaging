@@ -24,7 +24,6 @@ public class APIHandler extends AsyncTask<String, Void, String> {
     final private String secretKey = "rWAcPx6YAAcgviM7BlouEW2Pgf5hC6uWctdLmFgS";
     final private String userAgent = "Rackspace Management Interface";
     final private String apiURL = "https://api.emailsrvr.com/v1/";
-    //final private String userAgent = "RyanTesting";
     String formattedDate;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddkkmmss", Locale.ENGLISH);
     Date date = new Date();
@@ -80,7 +79,7 @@ public class APIHandler extends AsyncTask<String, Void, String> {
 
             // url = new URL("https://api.emailsrvr.com/v1/customers/me/domains");
             url = new URL("https://api.emailsrvr.com/v1/customers/1948717/domains/secureandroidmessaging.com/rs/mailboxes/testact");
-            String param = "password=Tabby1030#";
+            String param = "password=Today123";
             urlConnection = (HttpsURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             urlConnection.setRequestMethod("POST");
