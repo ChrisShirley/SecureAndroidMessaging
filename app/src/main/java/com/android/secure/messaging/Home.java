@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.secure.messaging.contacts.ContactHandler;
+import com.android.secure.messaging.contacts.ContactsActivity;
 import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.nfc.NFCHandler;
 
@@ -226,7 +227,9 @@ public class Home extends AppCompatActivity
 
             startNFCHandler();
         } else if (id == R.id.contacts) {
-
+            Intent intent = new Intent(this, ContactsActivity.class);
+            startActivity(intent);
+            //Toast.makeText(this,"Contacts Activity",Toast.LENGTH_LONG).show();
 
         } else if (id == R.id.Settings) {
 
@@ -252,5 +255,10 @@ public class Home extends AppCompatActivity
     {
         if(nfcHandler.deviceHasNFC())
             nfcHandler.isNFCEnabled();
+    }
+
+    public static ContactHandler getContactHandler()
+    {
+        return contactHandler;
     }
 }
