@@ -15,8 +15,11 @@ import com.android.secure.messaging.Biometrics.BiometricCipher;
 import com.android.secure.messaging.Biometrics.BiometricKeyGenerator;
 import com.android.secure.messaging.Biometrics.FingerprintHandler;
 import com.android.secure.messaging.Preferences.Preferences;
+import com.android.secure.messaging.email.EmailCommService;
 import com.android.secure.messaging.email.EmailGenerator;
 import com.android.secure.messaging.email.RandomStringGenerator;
+
+import javax.mail.MessagingException;
 
 public class BiometricActivity extends AppCompatActivity {
 
@@ -33,6 +36,7 @@ public class BiometricActivity extends AppCompatActivity {
 
     RandomStringGenerator rsg = new RandomStringGenerator();
     Preferences preferences = new Preferences();
+    EmailCommService ecs = new EmailCommService();
 
 
     @Override
@@ -42,6 +46,9 @@ public class BiometricActivity extends AppCompatActivity {
 
         fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
 
+
+        ecs.execute();
+
         biometricKeyGenerator.generateKey();
         biometricCipher = new BiometricCipher(biometricKeyGenerator.getKeyStore(), biometricKeyGenerator.getBiometricKey());
 
@@ -50,7 +57,7 @@ public class BiometricActivity extends AppCompatActivity {
         generatdPassword = rsg.generateRandomPassword(10);
 
         try {
-            emailGenerator.execute(generatedEmail,generatdPassword);
+            emailGenerator.execute(generatedEmail, generatdPassword);
             //preferences.setEmailAddress(getApplicationContext(),generatedEmail + domain);
             System.out.println("This is what is in the email file: " + preferences.getEmailAddress(getApplicationContext()));
         } catch (Exception e) {
@@ -71,8 +78,8 @@ public class BiometricActivity extends AppCompatActivity {
         }
     }
 
-    public void startHome(Context context){
-        Intent i = new Intent(context,Home.class);
+    public void startHome(Context context) {
+        Intent i = new Intent(context, Home.class);
         context.startActivity(i);
         ((Activity) context).setContentView(R.layout.activity_home);
 
