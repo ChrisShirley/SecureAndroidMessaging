@@ -1,6 +1,8 @@
 package com.android.secure.messaging;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.CancellationSignal;
@@ -66,12 +68,14 @@ public class BiometricActivity extends AppCompatActivity {
             cancellationSignal = fingerprintHandler.getCancellationSignal();
             ContextCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT);
             fingerprintManager.authenticate(cryptoObject, cancellationSignal, 0, fingerprintHandler, null);
-
-            /*Intent i = new Intent(getApplicationContext(),Home.class);
-            startActivity(i);
-            setContentView(R.layout.activity_home);
-            */
         }
+    }
+
+    public void startHome(Context context){
+        Intent i = new Intent(context,Home.class);
+        context.startActivity(i);
+        ((Activity) context).setContentView(R.layout.activity_home);
 
     }
+
 }

@@ -9,6 +9,8 @@ import android.support.v4.app.ActivityCompat;
 
 import android.widget.Toast;
 
+import com.android.secure.messaging.BiometricActivity;
+
 /**
  * Created by Ryan on 10/2/16.
  */
@@ -17,6 +19,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
 
     CancellationSignal cancellationSignal;
     Context mContext;
+    BiometricActivity biometricActivity = new BiometricActivity();
 
     public FingerprintHandler(Context context){
         mContext = context;
@@ -47,6 +50,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     @Override
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
         Toast.makeText(mContext, "Successful Authentication!", Toast.LENGTH_LONG).show();
+        biometricActivity.startHome(mContext);
     }
 
     public CancellationSignal getCancellationSignal() {
