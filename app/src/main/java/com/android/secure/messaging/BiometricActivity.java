@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.android.secure.messaging.Biometrics.BiometricCipher;
 import com.android.secure.messaging.Biometrics.BiometricKeyGenerator;
 import com.android.secure.messaging.Biometrics.FingerprintHandler;
+import com.android.secure.messaging.Preferences.Preferences;
 import com.android.secure.messaging.email.EmailGenerator;
 import com.android.secure.messaging.email.RandomStringGenerator;
 
@@ -24,9 +25,12 @@ public class BiometricActivity extends AppCompatActivity {
     BiometricCipher biometricCipher;
     FingerprintHandler fingerprintHandler;
     EmailGenerator emailGenerator = new EmailGenerator();
-    String params;
+    private String domain = "@secureandroidmessaging.com";
+    String generatedEmail;
+    String generatdPassword;
 
     RandomStringGenerator rsg = new RandomStringGenerator();
+    Preferences preferences = new Preferences();
 
 
     @Override
@@ -40,10 +44,13 @@ public class BiometricActivity extends AppCompatActivity {
         biometricCipher = new BiometricCipher(biometricKeyGenerator.getKeyStore(), biometricKeyGenerator.getBiometricKey());
 
 
+        generatedEmail = rsg.generateRandomEmail(12);
+        generatdPassword = rsg.generateRandomPassword(10);
 
         try {
-            //String params = new String("ryantest");
-            emailGenerator.execute(rsg.generateRandomEmail(12), rsg.generateRandomPassword(10));
+            emailGenerator.execute(generatedEmail,generatdPassword);
+            //preferences.setEmailAddress(getApplicationContext(),generatedEmail + domain);
+            System.out.println("This is what is in the email file: " + preferences.getEmailAddress(getApplicationContext()));
         } catch (Exception e) {
             e.printStackTrace();
         }
