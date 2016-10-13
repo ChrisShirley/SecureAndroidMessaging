@@ -71,7 +71,8 @@ public class Home extends AppCompatActivity
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcHandler = new NFCHandler(this,mNfcAdapter);
-        mNfcAdapter.setNdefPushMessageCallback(this, this);
+        if(nfcHandler.deviceHasNFC())
+            mNfcAdapter.setNdefPushMessageCallback(this, this);
 
         contactHandler = new ContactHandler(this);
 
@@ -104,7 +105,8 @@ public class Home extends AppCompatActivity
                 0,
                 new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
                 0);
-        mNfcAdapter.enableForegroundDispatch(this, pi, null, null);
+        if(mNfcAdapter!=null)
+            mNfcAdapter.enableForegroundDispatch(this, pi, null, null);
 
         // Check to see that the Activity started due to an Android Beam
 
@@ -255,6 +257,11 @@ public class Home extends AppCompatActivity
     {
         if(nfcHandler.deviceHasNFC())
             nfcHandler.isNFCEnabled();
+        else {
+            nfcHandler.noNFC(this);
+            //finish();
+            //System.exit(0);
+        }
     }
 
 

@@ -14,6 +14,7 @@ import android.widget.Toast;
 public class NFCHandler {
 
     Context context;
+    static Activity parentActivity;
     NfcAdapter mNfcAdapter;
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
@@ -25,6 +26,20 @@ public class NFCHandler {
 
                 case DialogInterface.BUTTON_NEGATIVE:
                     //No button clicked
+                    break;
+            }
+        }
+    };
+    DialogInterface.OnClickListener noNFCdialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    context.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    NFCHandler.quit();
                     break;
             }
         }
@@ -52,7 +67,7 @@ public class NFCHandler {
     public boolean isNFCEnabled()
     {
         if(mNfcAdapter.isEnabled()) {
-            Toast.makeText(context,"NFC Activated. Places devices back to back to begin transfer.",Toast.LENGTH_LONG).show();
+            Toast.makeText(context,"NFC Activated. Please place devices back to back to begin transfer.",Toast.LENGTH_LONG).show();
             return true;
         }
         else {
@@ -63,6 +78,23 @@ public class NFCHandler {
 
         return false;
 
+    }
+
+    public boolean noNFC(Activity activity)
+    {
+        parentActivity = activity;
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("This device does not have NFC. Unfortunately that makes it incompatible with S.A.M.")
+                .setNegativeButton("Exit", noNFCdialogClickListener).show();
+
+        return true;
+
+    }
+
+    private static void quit()
+    {
+        parentActivity.finish();
+        System.exit(0);
     }
 
       boolean accept()
