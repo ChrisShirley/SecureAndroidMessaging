@@ -81,19 +81,20 @@ public class DAO {
 
 
 
-    public List<Contact> getAllContacts(String id)
+    public List<Contact> getAllContacts()
     {
         List<Contact> contacts = new ArrayList<Contact>();
         if(database==null)
             database = dbHelper.getWritableDatabase();
         Cursor cursor = database.rawQuery("SELECT  * FROM " +DatabaseHelper.TABLE_CONTACTS, null);
 
-        cursor.moveToFirst();
-
-        while (!cursor.isAfterLast()) {
-            Contact contact = cursorToContact(cursor);
-            contacts.add(contact);
-            cursor.moveToNext();
+        if(cursor.moveToFirst()) {
+            Contact contact =null;
+            do {
+                contact = cursorToContact(cursor);
+                contacts.add(contact);
+            }
+            while(cursor.moveToNext());
         }
         // Make sure to close the cursor
         cursor.close();
@@ -103,38 +104,13 @@ public class DAO {
     private Contact cursorToContact(Cursor databaseCursor) {
 
 
-        String id =databaseCursor.getString(1);
-        Contact contact = new Contact();
-        ContentResolver contentResolver = context.getContentResolver();
-        Cursor phoneCursor = contentResolver.query(Data.CONTENT_URI,
-                new String[] { Data._ID, Data.DISPLAY_NAME, Phone.NUMBER,
-                        Data.CONTACT_ID, Phone.TYPE, Phone.LABEL },
-                Data.MIMETYPE + "='" + Phone.CONTENT_ITEM_TYPE + "'", null,
-                Data._ID);
+        String name = databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(DatabaseHelper.NAME));
+        String email = databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(DatabaseHelper.EMAIL));
+        String publicKey = databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(DatabaseHelper.PKEY));
 
-        phoneCursor.moveToFirst();
-
-        String[] columnNames = phoneCursor.getColumnNames();
-        int displayNameColIndex = phoneCursor.getColumnIndex("display_name");
-        int idColIndex = phoneCursor.getColumnIndex("_id");
-        int col2Index = phoneCursor.getColumnIndex(columnNames[2]);
-        int col3Index = phoneCursor.getColumnIndex(columnNames[3]);
-        int count = phoneCursor.getCount();
-        for(int cursorPosition=0;cursorPosition<count;cursorPosition++)
-        {
-            if(phoneCursor.getInt(col3Index)==Integer.parseInt(id))
-            {
-                String displayName = phoneCursor.getString(displayNameColIndex);
-                String phoneNumber = phoneCursor.getString(col2Index);
-                int contactId = phoneCursor.getInt(col3Index);
+        return new Contact(name,email,publicKey);
 
 
-                break;
-            }
-            phoneCursor.moveToNext();
-        }
-
-        return contact;
     }
 
 
