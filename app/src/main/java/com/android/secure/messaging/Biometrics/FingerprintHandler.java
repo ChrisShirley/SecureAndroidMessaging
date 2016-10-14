@@ -19,22 +19,31 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
 
     CancellationSignal cancellationSignal;
     Context mContext;
-    BiometricActivity biometricActivity = new BiometricActivity();
+    BiometricHandler biometricHandler;
 
     public FingerprintHandler(Context context){
         mContext = context;
+
     }
 
     public void startAuthentication(FingerprintManager fingerprintManager, FingerprintManager.CryptoObject cryptoObject){
 
         cancellationSignal = new CancellationSignal();
 
-        if(ActivityCompat.checkSelfPermission(mContext, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED){
+        if(!biometricHandler.isBiometricsEnabled()){
             return;
         }
 
 
     }
+
+    public boolean hasScanner(FingerprintManager fingerprintManager)
+    {
+        if(biometricHandler==null)
+            biometricHandler = new BiometricHandler(mContext,fingerprintManager);
+        return biometricHandler.isBiometricsAvailable();
+    }
+
 
     //Override methods from AuthenticationCallBack super class
     @Override
@@ -50,8 +59,9 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     @Override
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
         Toast.makeText(mContext, "Successful Authentication!", Toast.LENGTH_LONG).show();
-        biometricActivity.startHome(mContext);
+       BiometricActivity.startHome();
     }
+
 
     public CancellationSignal getCancellationSignal() {
         return cancellationSignal;
