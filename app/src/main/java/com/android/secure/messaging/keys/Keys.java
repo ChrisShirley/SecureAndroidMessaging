@@ -22,7 +22,7 @@ import java.security.spec.X509EncodedKeySpec;
  */
 public class Keys {
 
-    final private static String SAM_PREFERENCES = "Preferences";
+    final private static String SAM_PREFERENCES = "PreferencesHandler";
     private static Keys ourInstance = new Keys();
     private static PrivateKey privateKey;
     private static PublicKey publicKey;
