@@ -50,9 +50,9 @@ public class EmailCommService extends AsyncTask<String, Void, Void> {
         InternetAddress toAddress;
         toAddress = new InternetAddress(sendTo);
         message.addRecipient(Message.RecipientType.TO, toAddress);
-        message.setSubject("Send Auto-Mail");
+        message.setSubject("Test email");
         message.setContent(multipart);
-        message.setText("Demo For Sending Mail in Android Automatically");
+        message.setText("Someone is testing the app");
 
         Transport transport = session.getTransport("smtp");
         transport.connect(hostAddress,587,sendFrom,password);
