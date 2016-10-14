@@ -74,16 +74,22 @@ public class BiometricActivity extends AppCompatActivity {
         // System.out.println("KeyStore: " + biometricKeyGenerator.getKeyStore());
 
         if (biometricCipher.initCipher()) {
-             //   System.out.println("Got into the biometricCipher.initCipher() if loop");
+            //   System.out.println("Got into the biometricCipher.initCipher() if loop");
             //Toast.makeText(this, "In the loop", Toast.LENGTH_LONG).show();
             cryptoObject = new FingerprintManager.CryptoObject(biometricCipher.getCipher());
             fingerprintHandler.startAuthentication(fingerprintManager, cryptoObject);
             cancellationSignal = fingerprintHandler.getCancellationSignal();
-            ContextCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT);
-            fingerprintManager.authenticate(cryptoObject, cancellationSignal, 0, fingerprintHandler, null);
+            startBiometricAuthentication();
         }
 
 
+
+    }
+
+    private void startBiometricAuthentication()
+    {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT);
+            fingerprintManager.authenticate(cryptoObject, cancellationSignal, 0, fingerprintHandler, null);
 
     }
 
@@ -104,8 +110,10 @@ public class BiometricActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if(!inOnCreate)
-            checkBiometricStatus();
+        if(!inOnCreate) {
+            if (checkBiometricStatus())
+                startBiometricAuthentication();
+        }
         else
             inOnCreate=false;
         //Toast.makeText(this, "Resuming!", Toast.LENGTH_LONG).show();
