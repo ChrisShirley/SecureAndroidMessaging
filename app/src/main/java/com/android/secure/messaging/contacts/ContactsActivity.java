@@ -11,7 +11,9 @@ import com.android.secure.messaging.Home;
 import com.android.secure.messaging.R;
 
 import java.util.List;
-
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.WindowManager;
 public class ContactsActivity extends AppCompatActivity {
 
     List<Contact> contactList;
@@ -20,6 +22,8 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         contactList = ContactHandler.getDAO().getAllContacts();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_contacts);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

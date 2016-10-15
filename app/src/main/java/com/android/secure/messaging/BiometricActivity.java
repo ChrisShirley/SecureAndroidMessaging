@@ -22,6 +22,9 @@ import com.android.secure.messaging.Preferences.PreferencesHandler;
 import com.android.secure.messaging.email.EmailCommService;
 import com.android.secure.messaging.email.EmailGenerator;
 import com.android.secure.messaging.email.RandomStringGenerator;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.WindowManager;
 
 public class BiometricActivity extends AppCompatActivity {
 
@@ -46,6 +49,8 @@ public class BiometricActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_biometric);
         inOnCreate = true;
         context = this;
