@@ -1,14 +1,10 @@
 package com.android.secure.messaging.Biometrics;
 
-import android.Manifest;
+
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.CancellationSignal;
-import android.support.v4.app.ActivityCompat;
-
 import android.widget.Toast;
-
 import com.android.secure.messaging.BiometricActivity;
 
 /**

@@ -5,19 +5,12 @@ package com.android.secure.messaging.database;
  */
 import java.util.ArrayList;
 import java.util.List;
-import java.io.*;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.provider.BaseColumns;
-import android.provider.ContactsContract;
-import android.provider.ContactsContract.Contacts;
-import android.provider.ContactsContract.Data;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
+
 
 import com.android.secure.messaging.contacts.Contact;
 
@@ -45,6 +38,7 @@ public class DAO {
 
     public void close() {
         dbHelper.close();
+        database=null;
     }
 
 
@@ -62,7 +56,8 @@ public class DAO {
 
     public boolean saveContact(Contact contact)
     {
-        open();
+        if(database==null)
+            open();
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.NAME, contact.getName());
         values.put(DatabaseHelper.EMAIL, contact.getEmail());
@@ -71,6 +66,7 @@ public class DAO {
         long id = database.insert(DatabaseHelper.TABLE_CONTACTS, null,
                 values);
         close();
+
         if(id==-1)
             return false;
         else
@@ -83,9 +79,10 @@ public class DAO {
 
     public List<Contact> getAllContacts()
     {
+
         List<Contact> contacts = new ArrayList<Contact>();
         if(database==null)
-            database = dbHelper.getWritableDatabase();
+            open();
         Cursor cursor = database.rawQuery("SELECT  * FROM " +DatabaseHelper.TABLE_CONTACTS, null);
 
         if(cursor.moveToFirst()) {
@@ -98,6 +95,8 @@ public class DAO {
         }
         // Make sure to close the cursor
         cursor.close();
+        close();
+
         return contacts;
     }
 
