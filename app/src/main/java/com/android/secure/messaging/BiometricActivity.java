@@ -1,7 +1,6 @@
 package com.android.secure.messaging;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,20 +10,18 @@ import android.os.CancellationSignal;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import com.android.secure.messaging.Biometrics.BiometricCipher;
 import com.android.secure.messaging.Biometrics.BiometricKeyGenerator;
 import com.android.secure.messaging.Biometrics.FingerprintHandler;
+import com.android.secure.messaging.Preferences.Preferences;
 import com.android.secure.messaging.Preferences.PreferencesHandler;
 import com.android.secure.messaging.email.EmailCommService;
 import com.android.secure.messaging.email.EmailGenerator;
 import com.android.secure.messaging.email.RandomStringGenerator;
-import android.app.Activity;
-import android.os.Bundle;
+
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class BiometricActivity extends AppCompatActivity {
 
@@ -38,11 +35,11 @@ public class BiometricActivity extends AppCompatActivity {
     EmailGenerator emailGenerator = new EmailGenerator();
     private String domain = "@secureandroidmessaging.com";
     String generatedEmail;
-    String generatdPassword;
+    String generatedPassword;
     private static boolean inOnCreate = false;
 
     RandomStringGenerator rsg = new RandomStringGenerator();
-    PreferencesHandler preferencesHandler = new PreferencesHandler();
+    Preferences preferencesHandler = new PreferencesHandler();
     EmailCommService ecs = new EmailCommService();
 
 
@@ -59,28 +56,30 @@ public class BiometricActivity extends AppCompatActivity {
         if(!checkBiometricStatus())
             return;
 
-        ecs.execute();
-
         biometricKeyGenerator.generateKey();
         biometricCipher = new BiometricCipher(biometricKeyGenerator.getKeyStore(), biometricKeyGenerator.getBiometricKey());
 
 
         generatedEmail = rsg.generateRandomEmail(12);
-        generatdPassword = rsg.generateRandomPassword(10);
+        generatedPassword = rsg.generateRandomPassword(10);
 
         try {
-            emailGenerator.execute(generatedEmail, generatdPassword);
+            emailGenerator.execute(generatedEmail, generatedPassword);
+            preferencesHandler.setPreference(getApplicationContext(),preferencesHandler.getEmailPrefName(),generatedEmail + domain);
+            preferencesHandler.setPreference(getApplicationContext(),preferencesHandler.getPasswordPrefName(),generatedPassword);
+
             //preferencesHandler.setEmailAddress(getApplicationContext(),generatedEmail + domain);
             //System.out.println("This is what is in the email file: " + preferencesHandler.getEmailAddress(getApplicationContext()));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //System.out.println("Key: " + biometricKeyGenerator.getBiometricKey());
-        // System.out.println("KeyStore: " + biometricKeyGenerator.getKeyStore());
+
+        ecs.execute("ryan.silan@gmail.com", preferencesHandler.getPreference(getApplicationContext(),
+                preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
+                        preferencesHandler.getPasswordPrefName()), "this is a test");
+
 
         if (biometricCipher.initCipher()) {
-            //   System.out.println("Got into the biometricCipher.initCipher() if loop");
-            //Toast.makeText(this, "In the loop", Toast.LENGTH_LONG).show();
             cryptoObject = new FingerprintManager.CryptoObject(biometricCipher.getCipher());
             fingerprintHandler.startAuthentication(fingerprintManager, cryptoObject);
             cancellationSignal = fingerprintHandler.getCancellationSignal();

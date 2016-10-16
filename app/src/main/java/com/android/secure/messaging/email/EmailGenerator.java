@@ -2,6 +2,9 @@ package com.android.secure.messaging.email;
 
 import android.os.AsyncTask;
 
+import com.android.secure.messaging.Preferences.Preferences;
+import com.android.secure.messaging.Preferences.PreferencesHandler;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -16,15 +19,15 @@ import javax.net.ssl.HttpsURLConnection;
 public class EmailGenerator extends AsyncTask<String, Void, Void> {
 
     final private String userAgent = "Rackspace Management Interface";
+    Preferences preferences = new PreferencesHandler();
 
     @Override
     protected Void doInBackground(String... params) {
         String signature = null;
         String name = params[0];
         String password = params[1];
-        URL url;
 
-        System.out.println("This is the password: " + password);
+        URL url;
 
         try {
             SignatureGenerator signatureGenerator = new SignatureGenerator();

@@ -1,18 +1,23 @@
 package com.android.secure.messaging.email;
 
+import android.content.Context;
+
 /**
  * Created by christophershirley on 9/18/16.
  */
 public class EmailHandler {
 
-    EmailHandler()
-    {
+    EmailCommService ecs = new EmailCommService();
+    Context mContext;
 
+    EmailHandler(Context context)
+    {
+        mContext = context;
     }
 
-    boolean send(Email email)
+    void send(String to, String from, String password, String message)
     {
-        return false;
+        ecs.execute(to, from, password, message);
     }
 
     boolean saveUniqueEmail(String uniqueEmailAddress)

@@ -9,6 +9,9 @@ import android.content.SharedPreferences;
 
 public class PreferencesHandler implements Preferences {
 
+    public static final String emailPrefName = "SAMEmail";
+    public static final String passwordPrefName = "SAMPassword";
+
     //private final String prefName = "samEmail";
 
     /*
@@ -53,5 +56,15 @@ public class PreferencesHandler implements Preferences {
         SharedPreferences sharedPreferences;
         sharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
         return sharedPreferences.getString(preferenceName, null);
+    }
+
+    @Override
+    public String getEmailPrefName() {
+        return emailPrefName;
+    }
+
+    @Override
+    public String getPasswordPrefName() {
+        return passwordPrefName;
     }
 }
