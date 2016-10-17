@@ -78,7 +78,11 @@ public class Home extends AppCompatActivity
         if(nfcHandler.deviceHasNFC())
             mNfcAdapter.setNdefPushMessageCallback(this, this);
 
+
         contactHandler = new ContactHandler(this);
+
+        for(int count = 0; count<20; ++count)
+            contactHandler.saveContact("Friend:"+ String.valueOf(count),"test@test.com", String.valueOf(count));
 
     }
 
