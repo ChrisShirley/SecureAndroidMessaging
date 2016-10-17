@@ -41,7 +41,6 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
         return biometricHandler.isBiometricsAvailable();
     }
 
-
     //Override methods from AuthenticationCallBack super class
     @Override
     public void onAuthenticationError(int errMsgId, CharSequence errString){

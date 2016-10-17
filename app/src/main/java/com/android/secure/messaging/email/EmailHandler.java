@@ -33,11 +33,6 @@ public class EmailHandler {
         receiveEmail.execute(checkEmailAddress, password);
     }
 
-    boolean saveUniqueEmail(String uniqueEmailAddress)
-    {
-        return false;
-    }
-
     public String requestUniqueEmailAddress()
     {
         String generatedEmail = rsg.generateRandomEmail(12);

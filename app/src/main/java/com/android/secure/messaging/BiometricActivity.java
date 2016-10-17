@@ -32,15 +32,15 @@ public class BiometricActivity extends AppCompatActivity {
     BiometricKeyGenerator biometricKeyGenerator = new BiometricKeyGenerator();
     BiometricCipher biometricCipher;
     FingerprintHandler fingerprintHandler;
-    EmailGenerator emailGenerator = new EmailGenerator();
-    private String domain = "@secureandroidmessaging.com";
-    String generatedEmail;
-    String generatedPassword;
+//    EmailGenerator emailGenerator = new EmailGenerator();
+//    private String domain = "@secureandroidmessaging.com";
+//    String generatedEmail;
+//    String generatedPassword;
     private static boolean inOnCreate = false;
 
-    RandomStringGenerator rsg = new RandomStringGenerator();
+    //RandomStringGenerator rsg = new RandomStringGenerator();
     Preferences preferencesHandler = new PreferencesHandler();
-    SendEmail ecs = new SendEmail();
+    //SendEmail ecs = new SendEmail();
     EmailHandler emailHandler;
 
 

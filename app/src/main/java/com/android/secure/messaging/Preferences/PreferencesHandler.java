@@ -9,8 +9,8 @@ import android.content.SharedPreferences;
 
 public class PreferencesHandler implements Preferences {
 
-    public static final String emailPrefName = "SAMEmail";
-    public static final String passwordPrefName = "SAMPassword";
+    private static final String emailPrefName = "SAMEmail";
+    private static final String passwordPrefName = "SAMPassword";
 
     //private final String prefName = "samEmail";
 
