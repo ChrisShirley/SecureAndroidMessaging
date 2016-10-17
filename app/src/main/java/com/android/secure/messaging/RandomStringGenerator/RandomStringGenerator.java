@@ -1,4 +1,4 @@
-package com.android.secure.messaging.email;
+package com.android.secure.messaging.RandomStringGenerator;
 
 import java.security.SecureRandom;
 import java.util.Random;

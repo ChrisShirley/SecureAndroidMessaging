@@ -67,4 +67,10 @@ public class PreferencesHandler implements Preferences {
     public String getPasswordPrefName() {
         return passwordPrefName;
     }
+
+    @Override
+    public void resetPreferences(Context context){
+        setPreference(context, getEmailPrefName(), null);
+        setPreference(context, getPasswordPrefName(), null);
+    }
 }

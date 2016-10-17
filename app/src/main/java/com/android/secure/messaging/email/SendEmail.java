@@ -2,6 +2,7 @@ package com.android.secure.messaging.email;
 
 
 import android.os.AsyncTask;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.Properties;
@@ -21,19 +22,18 @@ import javax.mail.util.ByteArrayDataSource;
 
 //Class will be used to send/receive email messages
 
-public class EmailCommService extends AsyncTask<String, Void, Void> {
+public class SendEmail extends AsyncTask<String, Void, Void> {
 
     final private String hostAddress = "secure.emailsrvr.com";
     final private int smtpPort = 587; //465
-//    String sendFrom = "testaccount@secureandroidmessaging.com";
+    //  String sendFrom = "testaccount@secureandroidmessaging.com";
 //    String sendTo = "ryan.silan@gmail.com";
 //    String password = "Sweng501#";
-    String finalString="";
+    String finalString = "";
     Multipart multipart;
 
 
-
-    private void sendEmail(String sendTo, String sendFrom, String password, String message)throws AddressException, MessagingException{
+    private void sendEmail(String sendTo, String sendFrom, String password, String message) throws AddressException, MessagingException {
 
         Properties properties = System.getProperties();
         properties.put("mail.smtp.starttls.enable", "true");
@@ -46,8 +46,8 @@ public class EmailCommService extends AsyncTask<String, Void, Void> {
         System.out.println("This is the username:" + sendFrom);
         System.out.println("This is the password:" + password);
 
-        Session session = Session.getDefaultInstance(properties,null);
-        DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(finalString.getBytes(),"test/plain"));
+        Session session = Session.getDefaultInstance(properties, null);
+        DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(finalString.getBytes(), "test/plain"));
         MimeMessage email = new MimeMessage(session);
         email.setFrom(new InternetAddress(sendFrom));
         email.setDataHandler(dataHandler);
@@ -69,16 +69,17 @@ public class EmailCommService extends AsyncTask<String, Void, Void> {
 
     @Override
     protected Void doInBackground(String... params) {
-        String sendTo = params[0];
-        String sendFrom = params[1];
-        String password = params[2];
-        String message = params[3];
 
         try {
+            String sendTo = params[0];
+            String sendFrom = params[1];
+            String password = params[2];
+            String message = params[3];
             sendEmail(sendTo, sendFrom, password, message);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
         return null;
     }
+
 }

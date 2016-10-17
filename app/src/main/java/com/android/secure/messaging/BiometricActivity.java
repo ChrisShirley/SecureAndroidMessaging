@@ -16,12 +16,12 @@ import com.android.secure.messaging.Biometrics.BiometricKeyGenerator;
 import com.android.secure.messaging.Biometrics.FingerprintHandler;
 import com.android.secure.messaging.Preferences.Preferences;
 import com.android.secure.messaging.Preferences.PreferencesHandler;
-import com.android.secure.messaging.email.EmailCommService;
+import com.android.secure.messaging.email.SendEmail;
 import com.android.secure.messaging.email.EmailGenerator;
-import com.android.secure.messaging.email.RandomStringGenerator;
+import com.android.secure.messaging.RandomStringGenerator.RandomStringGenerator;
+import com.android.secure.messaging.email.EmailHandler;
 
 import android.view.WindowManager;
-import android.widget.Toast;
 
 public class BiometricActivity extends AppCompatActivity {
 
@@ -40,7 +40,8 @@ public class BiometricActivity extends AppCompatActivity {
 
     RandomStringGenerator rsg = new RandomStringGenerator();
     Preferences preferencesHandler = new PreferencesHandler();
-    EmailCommService ecs = new EmailCommService();
+    SendEmail ecs = new SendEmail();
+    EmailHandler emailHandler;
 
 
     @Override
@@ -53,31 +54,19 @@ public class BiometricActivity extends AppCompatActivity {
         context = this;
         fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
         fingerprintHandler = new FingerprintHandler(this);
+        emailHandler = new EmailHandler(context);
+
         if(!checkBiometricStatus())
             return;
 
         biometricKeyGenerator.generateKey();
         biometricCipher = new BiometricCipher(biometricKeyGenerator.getKeyStore(), biometricKeyGenerator.getBiometricKey());
 
-
-        generatedEmail = rsg.generateRandomEmail(12);
-        generatedPassword = rsg.generateRandomPassword(10);
-
-        try {
-            emailGenerator.execute(generatedEmail, generatedPassword);
-            preferencesHandler.setPreference(getApplicationContext(),preferencesHandler.getEmailPrefName(),generatedEmail + domain);
-            preferencesHandler.setPreference(getApplicationContext(),preferencesHandler.getPasswordPrefName(),generatedPassword);
-
-            //preferencesHandler.setEmailAddress(getApplicationContext(),generatedEmail + domain);
-            //System.out.println("This is what is in the email file: " + preferencesHandler.getEmailAddress(getApplicationContext()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        ecs.execute("ryan.silan@gmail.com", preferencesHandler.getPreference(getApplicationContext(),
-                preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
-                        preferencesHandler.getPasswordPrefName()), "this is a test");
-
+        //Just needed for testing, can be deleted later
+        System.out.println("This is the email: " + preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()));
+        preferencesHandler.resetPreferences(context);
+        System.out.println("This is the email: " + preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()));
+        System.out.println("This is the password: " + preferencesHandler.getPreference(context, preferencesHandler.getPasswordPrefName()));
 
         if (biometricCipher.initCipher()) {
             cryptoObject = new FingerprintManager.CryptoObject(biometricCipher.getCipher());
@@ -173,11 +162,20 @@ public class BiometricActivity extends AppCompatActivity {
             }
         };
 
-    public static void startHome() {
+    public void startHome() {
+        emailHandler = new EmailHandler(context);
+
+        //Check to see if the application has already assigned an email address
+        if(emailHandler.getUniqueEmail() == null){
+            //If null is returned, create email address.
+            emailHandler.requestUniqueEmailAddress();
+        }
+        emailHandler.send("testaccount@secureandroidmessaging.com", preferencesHandler.getPreference(context,
+                preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(context,
+                preferencesHandler.getPasswordPrefName()), "this is a test");
+        emailHandler.read("testaccount@secureandroidmessaging.com", "Sweng501#");
         Intent i = new Intent(context, Home.class);
         context.startActivity(i);
-
-
     }
 
 }

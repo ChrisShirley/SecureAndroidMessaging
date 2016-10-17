@@ -9,6 +9,8 @@ import android.content.Context;
 public interface Preferences {
 
 
+    void resetPreferences(Context context);
+
     void setPreference(Context context, String preferenceName, String prefValue);
 
     String getPreference(Context context, String preferenceName);
