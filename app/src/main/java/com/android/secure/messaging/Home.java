@@ -32,6 +32,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+@SuppressWarnings("deprecation")
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NfcAdapter.CreateNdefMessageCallback {
 

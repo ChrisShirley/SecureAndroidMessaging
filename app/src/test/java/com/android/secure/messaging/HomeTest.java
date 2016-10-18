@@ -1,7 +1,5 @@
 package com.android.secure.messaging;
-import android.test.ActivityInstrumentationTestCase2;
-import android.test.UiThreadTest;
-import android.view.View;
+
 
 import org.junit.*;
 
