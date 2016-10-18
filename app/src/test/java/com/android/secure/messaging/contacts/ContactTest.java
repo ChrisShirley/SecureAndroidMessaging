@@ -18,7 +18,7 @@ public class ContactTest {
 
     @Before
     public void setUp() throws Exception {
-        contact = new Contact(new Bundle());
+        contact = new Contact("test1","test2","test3");
 
 
     }
@@ -26,19 +26,19 @@ public class ContactTest {
     @Test
     public void getEmail() throws Exception {
 
-        TestCase.assertTrue(contact.getEmail()!=null);
+        TestCase.assertTrue(contact.getEmail().equals("test2"));
     }
 
     @Test
     public void getName() throws Exception {
 
-        TestCase.assertTrue(contact.getName()!=null);
+        TestCase.assertTrue(contact.getName().equals("test1"));
     }
 
     @Test
     public void getKey() throws Exception {
 
-        TestCase.assertTrue(contact.getKey()!=null);
+        TestCase.assertTrue(contact.getKey().equals("test3"));
     }
 
 

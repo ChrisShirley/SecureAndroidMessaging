@@ -16,7 +16,7 @@ public class EmailHandlerTest {
 
     EmailHandler emailHandler;
 
-    @Before
+   /* @Before
     public void setUp() throws Exception {
         emailHandler= new EmailHandler();
 
@@ -45,7 +45,7 @@ public class EmailHandlerTest {
     public void getUniqueEamil() throws Exception {
 
         TestCase.assertTrue(emailHandler.getUniqueEmail()!=null);
-    }
+    }*/
 
 
 
