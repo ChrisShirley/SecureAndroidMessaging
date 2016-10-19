@@ -53,8 +53,8 @@ public class Keys {
         try {
 
             KeyPairGenerator generator;
-            generator = KeyPairGenerator.getInstance("RSA", "BC");
-            generator.initialize(256, new SecureRandom());
+            generator = KeyPairGenerator.getInstance("RSA");
+            generator.initialize(2048, new SecureRandom());
             KeyPair pair = generator.generateKeyPair();
             publicKey = pair.getPublic();
             privateKey = pair.getPrivate();
@@ -68,9 +68,9 @@ public class Keys {
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-        } catch (NoSuchProviderException e) {
+        } /*catch (NoSuchProviderException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public PublicKey getPublicKey(){
@@ -79,12 +79,12 @@ public class Keys {
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(sigBytes);
         KeyFactory keyFactory = null;
         try {
-            keyFactory = KeyFactory.getInstance("RSA", "BC");
+            keyFactory = KeyFactory.getInstance("RSA");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-        } catch (NoSuchProviderException e) {
+        }/* catch (NoSuchProviderException e) {
             e.printStackTrace();
-        }
+        }*/
         try {
             return  keyFactory.generatePublic(x509KeySpec);
         } catch (InvalidKeySpecException e) {
@@ -101,12 +101,12 @@ public class Keys {
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(sigBytes);
         KeyFactory keyFactory = null;
         try {
-            keyFactory = KeyFactory.getInstance("RSA", "BC");
+            keyFactory = KeyFactory.getInstance("RSA");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-        } catch (NoSuchProviderException e) {
+        } /*catch (NoSuchProviderException e) {
             e.printStackTrace();
-        }
+        }*/
         try {
             return  keyFactory.generatePrivate(keySpec);
         } catch (InvalidKeySpecException e) {
