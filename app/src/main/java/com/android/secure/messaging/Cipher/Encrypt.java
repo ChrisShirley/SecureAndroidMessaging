@@ -27,7 +27,7 @@ import android.widget.TextView;
 
 public class Encrypt extends Activity {
 
-    TextView textView1;
+   /* TextView textView1;
     TextView textView2;
     EditText editText1;
     EditText editText2;
@@ -167,6 +167,6 @@ public class Encrypt extends Activity {
             editText1.setText("Encrypt 4\n" + ex.toString());
         }
         return result.toByteArray();
-    }
+    }*/
 
 }

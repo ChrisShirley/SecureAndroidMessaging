@@ -23,7 +23,7 @@ import android.widget.EditText;
 
 public class Decrypt extends Activity
 {
-    EditText editText1;
+    /*EditText editText1;
     byte[] privKeyBytes = null;
     PrivateKey privateKey = null;
 
@@ -151,5 +151,5 @@ public class Decrypt extends Activity
         {
             return null;
         }
-    }
+    }*/
 }

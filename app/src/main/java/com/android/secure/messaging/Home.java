@@ -2,6 +2,7 @@ package com.android.secure.messaging;
 
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.NdefMessage;
@@ -21,9 +22,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
 import com.android.secure.messaging.contacts.ContactsActivity;
 import com.android.secure.messaging.keys.Keys;
@@ -31,6 +37,9 @@ import com.android.secure.messaging.nfc.NFCHandler;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.WindowManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class Home extends AppCompatActivity
@@ -57,8 +66,9 @@ public class Home extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+                createMessageDialog();
             }
         });
 
@@ -164,6 +174,54 @@ public class Home extends AppCompatActivity
     };
 
 
+
+    public void createMessageDialog()
+    {
+
+        //Make new Dialog
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("New Message");
+        dialog.setIcon(R.drawable.ic_mail);
+        dialog.setMessage("\n").setPositiveButton("Send", dialogClickListener)
+                .setNegativeButton("Cancel", dialogClickListener);
+
+        List<String> contactNames = new ArrayList<String>();
+        contactNames.add("Select Contact");
+
+        List<Contact> contacts = contactHandler.getAllContacts();
+        for(Contact c : contacts)
+            contactNames.add(c.getName());
+        Context context = this;
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final ArrayAdapter<String> adp = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_dropdown_item, contactNames);
+
+
+        final Spinner sp = new Spinner(this);
+        sp.setLayoutParams(new LinearLayout.LayoutParams(DrawerLayout.LayoutParams.MATCH_PARENT, DrawerLayout.LayoutParams.MATCH_PARENT));
+        sp.setAdapter(adp);
+
+        final EditText descriptionBox = new EditText(context);
+        descriptionBox.setHint("Enter Message");
+
+        layout.addView(sp);
+        layout.addView(descriptionBox);
+
+        dialog.setView(layout);
+
+
+        final AlertDialog messageDialog = dialog.create();
+        messageDialog.show();
+
+        messageDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
     public void createAlert()
     {
