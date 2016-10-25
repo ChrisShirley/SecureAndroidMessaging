@@ -178,6 +178,7 @@ public class Home extends AppCompatActivity
     public void createMessageDialog()
     {
 
+        final String  selectContact = "Select Contact";
         //Make new Dialog
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("New Message");
@@ -186,7 +187,7 @@ public class Home extends AppCompatActivity
                 .setNegativeButton("Cancel", dialogClickListener);
 
         List<String> contactNames = new ArrayList<String>();
-        contactNames.add("Select Contact");
+        contactNames.add(selectContact);
 
         List<Contact> contacts = contactHandler.getAllContacts();
         for(Contact c : contacts)
@@ -203,11 +204,11 @@ public class Home extends AppCompatActivity
         sp.setLayoutParams(new LinearLayout.LayoutParams(DrawerLayout.LayoutParams.MATCH_PARENT, DrawerLayout.LayoutParams.MATCH_PARENT));
         sp.setAdapter(adp);
 
-        final EditText descriptionBox = new EditText(context);
-        descriptionBox.setHint("Enter Message");
+        final EditText messageBox = new EditText(context);
+        messageBox.setHint("Enter Message");
 
         layout.addView(sp);
-        layout.addView(descriptionBox);
+        layout.addView(messageBox);
 
         dialog.setView(layout);
 
@@ -218,7 +219,14 @@ public class Home extends AppCompatActivity
         messageDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
+
+                if(sp.getSelectedItem().toString().equals(selectContact))
+                    Toast.makeText(getApplicationContext(), "Please select a contact", Toast.LENGTH_LONG).show();
+
+                if(messageBox.getText().toString().trim().isEmpty())
+                    Toast.makeText(getApplicationContext(), "Please enter a message", Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
             }
         });
     }
