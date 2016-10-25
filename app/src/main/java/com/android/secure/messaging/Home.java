@@ -92,7 +92,7 @@ public class Home extends AppCompatActivity
 
         contactHandler = new ContactHandler(this);
 
-        for(int count = 0; count<20; ++count)
+        for(int count = 0; count<4; ++count)
             contactHandler.saveContact("Friend:"+ String.valueOf(count),"test@test.com", String.valueOf(count));
 
     }
@@ -151,6 +151,7 @@ public class Home extends AppCompatActivity
         createAlert();
 
     }
+
 
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
