@@ -75,6 +75,8 @@ public class Keys {
 
     public PublicKey getPublicKey(){
         String publicKeyString = sharedPreferences.getString("PublicKey", "");
+        if(publicKeyString.isEmpty())
+            return null;
         byte[] sigBytes = Base64.decode(publicKeyString,Base64.DEFAULT);
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(sigBytes);
         KeyFactory keyFactory = null;
@@ -97,6 +99,8 @@ public class Keys {
     }
     public PrivateKey getPrivateKey(){
         String privateKeyString = sharedPreferences.getString("PrivateKey", "");
+        if(privateKeyString.isEmpty())
+            return null;
         byte[] sigBytes = Base64.decode(privateKeyString,Base64.DEFAULT);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(sigBytes);
         KeyFactory keyFactory = null;
