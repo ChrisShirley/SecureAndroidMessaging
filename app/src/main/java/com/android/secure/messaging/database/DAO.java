@@ -45,7 +45,6 @@ public class DAO {
 
     public void deleteContact(String email,Contact contact)
     {
-
         Cursor cursor = database.rawQuery("SELECT "+ DatabaseHelper.EMAIL +" FROM "+ DatabaseHelper.TABLE_CONTACTS + " WHERE email= '"+email+"'", null);
         if(cursor.moveToFirst()){
             cursor.moveToFirst();

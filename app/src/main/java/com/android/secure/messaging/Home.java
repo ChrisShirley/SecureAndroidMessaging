@@ -29,9 +29,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.secure.messaging.Preferences.Preferences;
+import com.android.secure.messaging.Preferences.PreferencesHandler;
 import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
 import com.android.secure.messaging.contacts.ContactsActivity;
+import com.android.secure.messaging.email.EmailHandler;
 import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.nfc.NFCHandler;
 import android.app.Activity;
@@ -47,8 +50,10 @@ public class Home extends AppCompatActivity
 
     private static Keys keys;
     private  NFCHandler nfcHandler;
+    private Context context;
     private static NfcAdapter mNfcAdapter;
     private static ContactHandler contactHandler;
+    private final Preferences preferencesHandler = new PreferencesHandler();
 
     private NdefMessage msg;
     private  EditText input;
@@ -81,6 +86,7 @@ public class Home extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        context = getApplicationContext();
         keys = Keys.getInstance();
         keys.getKeys(this.getApplicationContext());
 
@@ -92,9 +98,11 @@ public class Home extends AppCompatActivity
 
         contactHandler = new ContactHandler(this);
 
+
         for(int count = 0; count<4; ++count)
             contactHandler.saveContact("Friend:"+ String.valueOf(count),"test@test.com", String.valueOf(count));
 
+        contactHandler.saveContact("Test Account", "testaccount@secureandroidmessaging.com", "1234451243");
     }
 
 
@@ -220,6 +228,10 @@ public class Home extends AppCompatActivity
         messageDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EmailHandler emailHandler = new EmailHandler(getApplicationContext());
+                String sendToEmailAddress = null;
+                String message = messageBox.getText().toString();
+
 
                 if(sp.getSelectedItem().toString().equals(selectContact))
                     Toast.makeText(getApplicationContext(), "Please select a contact", Toast.LENGTH_LONG).show();
@@ -228,6 +240,19 @@ public class Home extends AppCompatActivity
                     Toast.makeText(getApplicationContext(), "Please enter a message", Toast.LENGTH_LONG).show();
                 else
                     Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
+
+
+                List<Contact> contacts = contactHandler.getAllContacts();
+                for(Contact c : contacts) {
+                    if(sp.getSelectedItem().toString().equals(c.getName())){
+                        sendToEmailAddress = c.getEmail();
+                    }
+                }
+
+                emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
+                        preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
+                        preferencesHandler.getPasswordPrefName()), message);
+                messageDialog.dismiss();
             }
         });
     }

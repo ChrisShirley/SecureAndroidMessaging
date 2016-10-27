@@ -63,11 +63,12 @@ public class BiometricActivity extends AppCompatActivity {
         biometricCipher = new BiometricCipher(biometricKeyGenerator.getKeyStore(), biometricKeyGenerator.getBiometricKey());
 
         //Just needed for testing, can be deleted later
+        /*
         System.out.println("This is the email: " + preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()));
         preferencesHandler.resetPreferences(context);
         System.out.println("This is the email: " + preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()));
         System.out.println("This is the password: " + preferencesHandler.getPreference(context, preferencesHandler.getPasswordPrefName()));
-
+         */
         if (biometricCipher.initCipher()) {
             cryptoObject = new FingerprintManager.CryptoObject(biometricCipher.getCipher());
             fingerprintHandler.startAuthentication(fingerprintManager, cryptoObject);
@@ -170,10 +171,12 @@ public class BiometricActivity extends AppCompatActivity {
             //If null is returned, create email address.
             emailHandler.requestUniqueEmailAddress();
         }
+        /*
         emailHandler.send("testaccount@secureandroidmessaging.com", preferencesHandler.getPreference(context,
                 preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(context,
                 preferencesHandler.getPasswordPrefName()), "this is a test");
         emailHandler.read("testaccount@secureandroidmessaging.com", "Sweng501#");
+        */
         Intent i = new Intent(context, Home.class);
         context.startActivity(i);
     }

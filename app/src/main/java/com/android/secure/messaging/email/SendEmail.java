@@ -5,6 +5,9 @@ import android.os.AsyncTask;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.android.secure.messaging.keys.Encrypt;
+import com.android.secure.messaging.keys.Keys;
+
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -24,6 +27,8 @@ import javax.mail.util.ByteArrayDataSource;
 
 public class SendEmail extends AsyncTask<String, Void, Void> {
 
+    //Encrypt encrypt;
+    //Keys keys = Keys.getInstance();
     final private String hostAddress = "secure.emailsrvr.com";
     final private int smtpPort = 587; //465
     //  String sendFrom = "testaccount@secureandroidmessaging.com";
@@ -31,9 +36,16 @@ public class SendEmail extends AsyncTask<String, Void, Void> {
 //    String password = "Sweng501#";
     String finalString = "";
     Multipart multipart;
+    //byte[] encryptedMessage;
 
 
     private void sendEmail(String sendTo, String sendFrom, String password, String message) throws AddressException, MessagingException {
+
+        /*
+        encrypt = new Encrypt(keys.getPublicKey());
+        encryptedMessage = encrypt.encrypt(message.getBytes());
+        System.out.println("Encrypted Message:" + encryptedMessage);
+        */
 
         Properties properties = System.getProperties();
         properties.put("mail.smtp.starttls.enable", "true");
@@ -43,8 +55,8 @@ public class SendEmail extends AsyncTask<String, Void, Void> {
         properties.put("mail.smtp.port", smtpPort);
         properties.put("mail.smtp.auth", "true");
 
-        System.out.println("This is the username:" + sendFrom);
-        System.out.println("This is the password:" + password);
+        //System.out.println("This is the username:" + sendFrom);
+        //System.out.println("This is the password:" + password);
 
         Session session = Session.getDefaultInstance(properties, null);
         DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(finalString.getBytes(), "test/plain"));
@@ -56,7 +68,7 @@ public class SendEmail extends AsyncTask<String, Void, Void> {
         InternetAddress toAddress;
         toAddress = new InternetAddress(sendTo);
         email.addRecipient(Message.RecipientType.TO, toAddress);
-        email.setSubject("Test email");
+        email.setSubject("New Message from: " + sendFrom);
         email.setContent(multipart);
         email.setText(message);
 
