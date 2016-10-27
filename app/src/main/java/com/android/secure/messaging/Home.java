@@ -54,6 +54,7 @@ public class Home extends AppCompatActivity
     private static NfcAdapter mNfcAdapter;
     private static ContactHandler contactHandler;
     private final Preferences preferencesHandler = new PreferencesHandler();
+    private static List<Contact> contacts;
 
     private NdefMessage msg;
     private  EditText input;
@@ -98,9 +99,6 @@ public class Home extends AppCompatActivity
 
         contactHandler = new ContactHandler(this);
 
-
-        for(int count = 0; count<4; ++count)
-            contactHandler.saveContact("Friend:"+ String.valueOf(count),"test@test.com", String.valueOf(count));
 
         contactHandler.saveContact("Test Account", "testaccount@secureandroidmessaging.com", "1234451243");
     }
@@ -195,10 +193,17 @@ public class Home extends AppCompatActivity
         dialog.setMessage("\n").setPositiveButton("Send", dialogClickListener)
                 .setNegativeButton("Cancel", dialogClickListener);
 
-        List<String> contactNames = new ArrayList<String>();
+        List<String> contactNames = new ArrayList<>();
         contactNames.add(selectContact);
+        if(contacts!=null)
+            contacts.clear();
+        contacts = contactHandler.getAllContacts();
 
-        List<Contact> contacts = contactHandler.getAllContacts();
+        if(contacts.isEmpty()) {
+            Toast.makeText(context, "No Friends Detected", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         for(Contact c : contacts)
             contactNames.add(c.getName());
         Context context = this;
@@ -238,20 +243,23 @@ public class Home extends AppCompatActivity
 
                 if(messageBox.getText().toString().trim().isEmpty())
                     Toast.makeText(getApplicationContext(), "Please enter a message", Toast.LENGTH_LONG).show();
-                else
+                else {
                     Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
 
 
-                List<Contact> contacts = contactHandler.getAllContacts();
-                for(Contact c : contacts) {
-                    if(sp.getSelectedItem().toString().equals(c.getName())){
-                        sendToEmailAddress = c.getEmail();
-                    }
-                }
 
-                emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
-                        preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
-                        preferencesHandler.getPasswordPrefName()), message);
+                    for (Contact c : contacts) {
+                        if (sp.getSelectedItem().toString().equals(c.getName())) {
+                            sendToEmailAddress = c.getEmail();
+                        }
+                    }
+
+
+
+                    /**/emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
+                            preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
+                            preferencesHandler.getPasswordPrefName()), message);
+                }
                 messageDialog.dismiss();
             }
         });
