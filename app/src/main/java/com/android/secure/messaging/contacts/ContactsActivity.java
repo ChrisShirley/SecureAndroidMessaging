@@ -7,6 +7,7 @@ import com.android.secure.messaging.R;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,9 @@ public class ContactsActivity extends AppCompatActivity {
         contactList = ContactHandler.getDAO().getAllContacts();
         ListView myListView = (ListView) this.findViewById(R.id.display_contacts);
         ArrayList<String> displayContactList = new ArrayList<>();
+
+        if(contactList.isEmpty())
+            Toast.makeText(this,"No contacts",Toast.LENGTH_LONG).show();
 
         for(int contactInList = 0; contactInList<contactList.size(); contactInList++)
             displayContactList.add(contactList.get(contactInList).getName());

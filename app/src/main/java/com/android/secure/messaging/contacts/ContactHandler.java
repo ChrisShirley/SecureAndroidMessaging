@@ -12,9 +12,26 @@ import java.util.List;
  */
 public class ContactHandler {
     private  static DAO dao;
+    public static final String TABLE_CONTACTS = "contacts";
+
+    public static final String CONTACT_ID ="default_id";
+    public static final String NAME = "name";
+    public static final String EMAIL = "email";
+    public static final String PKEY = "pkey";
+
+
+    public static final String DATABASE_NAME = "contacts.db";
+    public static final int DATABASE_VERSION = 1;
+
+    private static final String CONTACT_TABLE_CREATE = "create table "
+            + TABLE_CONTACTS + "(" +
+            NAME + " text not null, "+
+            EMAIL +" text not null, "+
+            PKEY +" text PRIMARY KEY);";
+
     public ContactHandler(Context context)
     {
-        dao = new DAO(context);
+        dao = new DAO(context,DATABASE_NAME,DATABASE_VERSION);
     }
 
     public boolean saveContact(String name, String email, String key)

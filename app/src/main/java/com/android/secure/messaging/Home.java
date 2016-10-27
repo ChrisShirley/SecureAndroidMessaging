@@ -12,7 +12,6 @@ import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.secure.messaging.Preferences.Preferences;
@@ -37,8 +35,7 @@ import com.android.secure.messaging.contacts.ContactsActivity;
 import com.android.secure.messaging.email.EmailHandler;
 import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.nfc.NFCHandler;
-import android.app.Activity;
-import android.os.Bundle;
+
 import android.view.WindowManager;
 
 import java.util.ArrayList;
@@ -138,9 +135,6 @@ public class Home extends AppCompatActivity
     }
 
 
-
-
-
     /**
      * Parses the NDEF Message from the intent and prints to the TextView
      */
@@ -154,7 +148,7 @@ public class Home extends AppCompatActivity
         //Toast.makeText(this,new String(msg.getRecords()[0].getPayload()),Toast.LENGTH_LONG).show();
 
 
-        createAlert();
+        createContactDialog();
 
     }
 
@@ -265,7 +259,7 @@ public class Home extends AppCompatActivity
         });
     }
 
-    public void createAlert()
+    public void createContactDialog()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add Contact");
@@ -306,6 +300,12 @@ public class Home extends AppCompatActivity
         });
 
     }
+
+    public void createNewThread()
+    {
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

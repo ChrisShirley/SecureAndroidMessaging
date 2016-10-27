@@ -16,35 +16,27 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 
-    public static final String ID = "_id";
-    public static final String TABLE_CONTACTS = "contacts";
 
-    public static final String CONTACT_ID ="default_id";
-    public static final String NAME = "name";
-    public static final String EMAIL = "email";
-    public static final String PKEY = "pkey";
-
-
-    private static final String DATABASE_NAME = "contacts.db";
-    private static final int DATABASE_VERSION = 1;
+    private  SQLiteDatabase mDatabase;
+    private  String databaseName;
 
 
 
-    private static final String CONTACT_TABLE_CREATE = "create table "
-            + TABLE_CONTACTS + "(" +
-            NAME + " text not null, "+
-            EMAIL +" text not null, "+
-            PKEY +" text PRIMARY KEY);";
 
+    public DatabaseHelper(Context context, String dbName, int databaseVersion) {
+        super(context, dbName, null, databaseVersion);
+        databaseName = dbName;
+    }
 
-    public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    public void createDatabase(String databaseSchema)
+    {
+        mDatabase.execSQL(databaseSchema);
     }
 
     @Override
     public void onCreate(SQLiteDatabase database) {
 
-        database.execSQL(CONTACT_TABLE_CREATE);
+        mDatabase = database;
 
 
     }
@@ -52,7 +44,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
+        if(databaseName!=null)
+            db.execSQL("DROP TABLE IF EXISTS " + databaseName);
         onCreate(db);
     }
 

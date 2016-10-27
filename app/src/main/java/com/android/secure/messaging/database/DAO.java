@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 
 import com.android.secure.messaging.contacts.Contact;
+import com.android.secure.messaging.contacts.ContactHandler;
 
 /**
  * @author Chris J. Shirley
@@ -26,8 +27,8 @@ public class DAO {
     private static Context context;
     //private String[] allColumns = { DatabaseHelper.ID,DatabaseHelper.MOB };
 
-    public DAO(Context c) {
-        dbHelper = new DatabaseHelper(c);
+    public DAO(Context c,String databaseName,int databaseVersion) {
+        dbHelper = new DatabaseHelper(c,databaseName,databaseVersion);
         context = c;
 
     }
@@ -45,11 +46,11 @@ public class DAO {
 
     public void deleteContact(String email,Contact contact)
     {
-        Cursor cursor = database.rawQuery("SELECT "+ DatabaseHelper.EMAIL +" FROM "+ DatabaseHelper.TABLE_CONTACTS + " WHERE email= '"+email+"'", null);
+        Cursor cursor = database.rawQuery("SELECT "+ ContactHandler.EMAIL +" FROM "+ ContactHandler.TABLE_CONTACTS + " WHERE email= '"+email+"'", null);
         if(cursor.moveToFirst()){
             cursor.moveToFirst();
             String id = cursor.getString(0);
-            database.delete(DatabaseHelper.TABLE_CONTACTS, DatabaseHelper.CONTACT_ID +" = '"+contact.getKey()+"'" , null);
+            database.delete(ContactHandler.TABLE_CONTACTS, ContactHandler.CONTACT_ID +" = '"+contact.getKey()+"'" , null);
         }
     }
 
@@ -58,11 +59,11 @@ public class DAO {
         if(database==null)
             open();
         ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.NAME, contact.getName());
-        values.put(DatabaseHelper.EMAIL, contact.getEmail());
-        values.put(DatabaseHelper.PKEY, contact.getKey());
+        values.put(ContactHandler.NAME, contact.getName());
+        values.put(ContactHandler.EMAIL, contact.getEmail());
+        values.put(ContactHandler.PKEY, contact.getKey());
 
-        long id = database.insert(DatabaseHelper.TABLE_CONTACTS, null,
+        long id = database.insert(ContactHandler.TABLE_CONTACTS, null,
                 values);
         close();
 
@@ -82,7 +83,7 @@ public class DAO {
         List<Contact> contacts = new ArrayList<Contact>();
         if(database==null)
             open();
-        Cursor cursor = database.rawQuery("SELECT  * FROM " +DatabaseHelper.TABLE_CONTACTS, null);
+        Cursor cursor = database.rawQuery("SELECT  * FROM " + ContactHandler.TABLE_CONTACTS, null);
 
         if(cursor.moveToFirst()) {
             Contact contact =null;
@@ -102,9 +103,9 @@ public class DAO {
     private Contact cursorToContact(Cursor databaseCursor) {
 
 
-        String name = databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(DatabaseHelper.NAME));
-        String email = databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(DatabaseHelper.EMAIL));
-        String publicKey = databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(DatabaseHelper.PKEY));
+        String name = databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(ContactHandler.NAME));
+        String email = databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(ContactHandler.EMAIL));
+        String publicKey = databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(ContactHandler.PKEY));
 
         return new Contact(name,email,publicKey);
 
