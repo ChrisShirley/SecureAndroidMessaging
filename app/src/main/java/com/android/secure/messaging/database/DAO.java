@@ -14,6 +14,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
+import com.android.secure.messaging.messaging.MessagingThreadHandler;
 
 /**
  * @author Chris J. Shirley
@@ -27,9 +28,11 @@ public class DAO {
     private static Context context;
     //private String[] allColumns = { DatabaseHelper.ID,DatabaseHelper.MOB };
 
-    public DAO(Context c,String databaseName,int databaseVersion) {
+    public DAO(Context c,String databaseName,int databaseVersion,String databaseSetupString) {
         dbHelper = new DatabaseHelper(c,databaseName,databaseVersion);
         context = c;
+        dbHelper.setupDatabase(databaseSetupString);
+
 
     }
 
@@ -46,12 +49,12 @@ public class DAO {
 
     public void deleteContact(String email,Contact contact)
     {
-        Cursor cursor = database.rawQuery("SELECT "+ ContactHandler.EMAIL +" FROM "+ ContactHandler.TABLE_CONTACTS + " WHERE email= '"+email+"'", null);
+        /*Cursor cursor = database.rawQuery("SELECT "+ ContactHandler.EMAIL +" FROM "+ ContactHandler.TABLE_CONTACTS + " WHERE email= '"+email+"'", null);
         if(cursor.moveToFirst()){
             cursor.moveToFirst();
             String id = cursor.getString(0);
             database.delete(ContactHandler.TABLE_CONTACTS, ContactHandler.CONTACT_ID +" = '"+contact.getKey()+"'" , null);
-        }
+        }*/
     }
 
     public boolean saveContact(Contact contact)
@@ -75,6 +78,39 @@ public class DAO {
 
     }
 
+    public boolean saveThread(String name)
+    {
+        if(database==null)
+            open();
+        ContentValues values = new ContentValues();
+        values.put(MessagingThreadHandler.NAME, name);
+        long id = database.insert(MessagingThreadHandler.TABLE_THREADS, null,
+                values);
+        if(id==-1)
+            return false;
+        else
+            return true;
+    }
+
+    public List<String> getAllThreads() {
+        if(database==null)
+            open();
+        Cursor cursor = database.rawQuery("SELECT  * FROM " + MessagingThreadHandler.TABLE_THREADS, null);
+        List<String> threads = new ArrayList<>();;
+        String threadName;
+        if(cursor.moveToFirst()) {
+
+            do {
+                threadName = cursorToName(cursor);
+                threads.add(threadName);
+            }
+            while(cursor.moveToNext());
+        }
+        // Make sure to close the cursor
+        cursor.close();
+        close();
+        return threads;
+    }
 
 
     public List<Contact> getAllContacts()
@@ -110,6 +146,11 @@ public class DAO {
         return new Contact(name,email,publicKey);
 
 
+    }
+
+    private String cursorToName(Cursor databaseCursor)
+    {
+        return databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(MessagingThreadHandler.NAME));
     }
 
 

@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -34,6 +35,7 @@ import com.android.secure.messaging.contacts.ContactHandler;
 import com.android.secure.messaging.contacts.ContactsActivity;
 import com.android.secure.messaging.email.EmailHandler;
 import com.android.secure.messaging.keys.Keys;
+import com.android.secure.messaging.messaging.MessagingThreadHandler;
 import com.android.secure.messaging.nfc.NFCHandler;
 
 import android.view.WindowManager;
@@ -50,8 +52,12 @@ public class Home extends AppCompatActivity
     private Context context;
     private static NfcAdapter mNfcAdapter;
     private static ContactHandler contactHandler;
+    private static MessagingThreadHandler messagingThreadHandler;
     private final Preferences preferencesHandler = new PreferencesHandler();
     private static List<Contact> contacts;
+    private static List<String> messagingThreads;
+    private  ListView myListView;
+    private ArrayAdapter<String> threadAdapter;
 
     private NdefMessage msg;
     private  EditText input;
@@ -95,7 +101,10 @@ public class Home extends AppCompatActivity
 
 
         contactHandler = new ContactHandler(this);
-
+        messagingThreadHandler = new MessagingThreadHandler(this);
+        messagingThreads = messagingThreadHandler.getAllThreads();
+        if(!messagingThreads.isEmpty())
+            addThreads();
 
         contactHandler.saveContact("Test Account", "testaccount@secureandroidmessaging.com", "1234451243");
     }
@@ -229,6 +238,7 @@ public class Home extends AppCompatActivity
             public void onClick(View v) {
                 EmailHandler emailHandler = new EmailHandler(getApplicationContext());
                 String sendToEmailAddress = null;
+                String contactName = null;
                 String message = messageBox.getText().toString();
 
 
@@ -238,21 +248,27 @@ public class Home extends AppCompatActivity
                 if(messageBox.getText().toString().trim().isEmpty())
                     Toast.makeText(getApplicationContext(), "Please enter a message", Toast.LENGTH_LONG).show();
                 else {
-                    Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
 
 
-
-                    for (Contact c : contacts) {
-                        if (sp.getSelectedItem().toString().equals(c.getName())) {
-                            sendToEmailAddress = c.getEmail();
+                        boolean threadMatch = false;
+                        for (Contact c : contacts) {
+                            if (sp.getSelectedItem().toString().equals(c.getName())) {
+                                contactName = c.getName();
+                                sendToEmailAddress = c.getEmail();
+                                for(String messagingThread : messagingThreads)
+                                    if(contactName.equals(messagingThread))
+                                        threadMatch = true;
+                            }
                         }
-                    }
+                    if((!threadMatch) && (contactName!=null))
+                        addNewThread(contactName);
 
 
 
-                    /**/emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
+                    /*emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
                             preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
-                            preferencesHandler.getPasswordPrefName()), message);
+                            preferencesHandler.getPasswordPrefName()), message);*/
                 }
                 messageDialog.dismiss();
             }
@@ -301,9 +317,23 @@ public class Home extends AppCompatActivity
 
     }
 
-    public void createNewThread()
+    public void addNewThread(String name)
     {
+        messagingThreadHandler.saveThread(name);
+        if(threadAdapter==null) {
+            messagingThreads = messagingThreadHandler.getAllThreads();
+            addThreads();
+        }
+        else
+            threadAdapter.add(name);
+        myListView.invalidateViews();
+    }
 
+    public void addThreads()
+    {
+        myListView = (ListView) this.findViewById(R.id.display_message_threads);
+        threadAdapter =   new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,android.R.id.text1, messagingThreads);
+        myListView.setAdapter(threadAdapter);
     }
 
     @Override

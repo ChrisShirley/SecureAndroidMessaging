@@ -19,6 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private  SQLiteDatabase mDatabase;
     private  String databaseName;
+    private String databaseSetupString;
 
 
 
@@ -28,16 +29,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         databaseName = dbName;
     }
 
-    public void createDatabase(String databaseSchema)
+    public void setupDatabase(String setup)
     {
-        mDatabase.execSQL(databaseSchema);
+        databaseSetupString = setup;
     }
 
     @Override
     public void onCreate(SQLiteDatabase database) {
 
-        mDatabase = database;
-
+        database.execSQL(databaseSetupString);
 
     }
 

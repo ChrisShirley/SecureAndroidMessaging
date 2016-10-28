@@ -32,7 +32,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     private void addContacts()
     {
-        contactList = ContactHandler.getDAO().getAllContacts();
+        contactList =  new ContactHandler(this).getAllContacts();
         ListView myListView = (ListView) this.findViewById(R.id.display_contacts);
         ArrayList<String> displayContactList = new ArrayList<>();
 

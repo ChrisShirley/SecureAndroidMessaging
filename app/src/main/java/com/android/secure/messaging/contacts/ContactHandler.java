@@ -1,7 +1,6 @@
 package com.android.secure.messaging.contacts;
 
 import android.content.Context;
-import android.os.Bundle;
 
 import com.android.secure.messaging.database.DAO;
 
@@ -11,10 +10,10 @@ import java.util.List;
  * Created by christophershirley on 9/18/16.
  */
 public class ContactHandler {
-    private  static DAO dao;
+    private  DAO dao;
     public static final String TABLE_CONTACTS = "contacts";
 
-    public static final String CONTACT_ID ="default_id";
+    //public static final String CONTACT_ID ="default_id";
     public static final String NAME = "name";
     public static final String EMAIL = "email";
     public static final String PKEY = "pkey";
@@ -31,7 +30,7 @@ public class ContactHandler {
 
     public ContactHandler(Context context)
     {
-        dao = new DAO(context,DATABASE_NAME,DATABASE_VERSION);
+        dao = new DAO(context,DATABASE_NAME,DATABASE_VERSION,CONTACT_TABLE_CREATE);
     }
 
     public boolean saveContact(String name, String email, String key)
@@ -46,13 +45,14 @@ public class ContactHandler {
         return false;
     }
 
-    public List<Contact> getAllContacts()
+    public  List<Contact> getAllContacts()
     {
 
        List<Contact> contacts =  dao.getAllContacts();
         return contacts;
     }
 
-    public static DAO getDAO(){return dao;}
+
+
 }
 
