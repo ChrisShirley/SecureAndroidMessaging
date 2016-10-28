@@ -94,9 +94,11 @@ public class Keys {
         }
         return null;
     }
+
     public String getPublicKeyAsString(){
         return sharedPreferences.getString("PublicKey", "");
     }
+
     public PrivateKey getPrivateKey(){
         String privateKeyString = sharedPreferences.getString("PrivateKey", "");
         if(privateKeyString.isEmpty())
@@ -118,6 +120,7 @@ public class Keys {
         }
         return null;
     }
+
     public String getPrivateKeyAsString(){
         return sharedPreferences.getString("PrivateKey", "");
     }
