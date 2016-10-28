@@ -242,15 +242,19 @@ public class Home extends AppCompatActivity
                 String message = messageBox.getText().toString();
 
 
-                if(sp.getSelectedItem().toString().equals(selectContact))
+                if(sp.getSelectedItem().toString().equals(selectContact)) {
                     Toast.makeText(getApplicationContext(), "Please select a contact", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
-                if(messageBox.getText().toString().trim().isEmpty())
+                else if(messageBox.getText().toString().trim().isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Please enter a message", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 else {
-                        Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
 
 
+                    Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
                         boolean threadMatch = false;
                         for (Contact c : contacts) {
                             if (sp.getSelectedItem().toString().equals(c.getName())) {
@@ -263,6 +267,8 @@ public class Home extends AppCompatActivity
                         }
                     if((!threadMatch) && (contactName!=null))
                         addNewThread(contactName);
+                    else
+                        Toast.makeText(getApplicationContext(), "Thread exists! Open and append thread", Toast.LENGTH_LONG).show();
 
 
 
