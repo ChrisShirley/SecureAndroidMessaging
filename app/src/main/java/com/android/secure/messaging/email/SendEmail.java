@@ -68,7 +68,40 @@ public class SendEmail extends AsyncTask<String, Void, Void> {
         InternetAddress toAddress;
         toAddress = new InternetAddress(sendTo);
         email.addRecipient(Message.RecipientType.TO, toAddress);
-        email.setSubject("New Message from: " + sendFrom);
+        email.setSubject("New Secure Message From: " + sendFrom + " To: " + sendTo);
+        email.setContent(multipart);
+        email.setText(message);
+
+        Transport transport = session.getTransport("smtp");
+            transport.connect(hostAddress, smtpPort, sendFrom, password);
+        transport.sendMessage(email, email.getAllRecipients());
+        transport.close();
+
+        sendToSelf(sendTo, sendFrom, password, message);
+
+    }
+
+    private void sendToSelf(String sendTo, String sendFrom, String password, String message) throws AddressException, MessagingException{
+
+        Properties properties = System.getProperties();
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", hostAddress);
+        properties.put("mail.smtp.user", sendFrom);
+        properties.put("mail.smtp.password", password);
+        properties.put("mail.smtp.port", smtpPort);
+        properties.put("mail.smtp.auth", "true");
+
+        Session session = Session.getDefaultInstance(properties, null);
+        DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(finalString.getBytes(), "test/plain"));
+        MimeMessage email = new MimeMessage(session);
+        email.setFrom(new InternetAddress(sendFrom));
+        email.setDataHandler(dataHandler);
+
+        multipart = new MimeMultipart();
+        InternetAddress toAddress;
+        toAddress = new InternetAddress(sendFrom);
+        email.addRecipient(Message.RecipientType.TO, toAddress);
+        email.setSubject("New Secure Message From: " + sendFrom + " To: " + sendTo);
         email.setContent(multipart);
         email.setText(message);
 

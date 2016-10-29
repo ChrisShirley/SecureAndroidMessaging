@@ -284,9 +284,9 @@ public class Home extends AppCompatActivity
                     String temp4 = new String(temp3);
                     String hold = "hold";
                     temp = hold.getBytes();
-                    /*emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
+                    emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
                             preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
-                            preferencesHandler.getPasswordPrefName()), message);*/
+                            preferencesHandler.getPasswordPrefName()), message);
                 }
                 messageDialog.dismiss();
             }

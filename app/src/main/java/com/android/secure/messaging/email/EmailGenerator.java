@@ -19,7 +19,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class EmailGenerator extends AsyncTask<String, Void, Void> {
 
     final private String userAgent = "Rackspace Management Interface";
-    Preferences preferences = new PreferencesHandler();
+    //Preferences preferences = new PreferencesHandler();
 
     @Override
     protected Void doInBackground(String... params) {
