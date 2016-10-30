@@ -12,6 +12,7 @@ import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
+import android.text.Editable;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -34,6 +35,7 @@ import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
 import com.android.secure.messaging.contacts.ContactsActivity;
 import com.android.secure.messaging.email.EmailHandler;
+import com.android.secure.messaging.keys.Encrypt;
 import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.messaging.MessagingThreadHandler;
 import com.android.secure.messaging.nfc.NFCHandler;
@@ -42,6 +44,11 @@ import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import java.lang.String;
+
+
+import java.io.*;
 
 @SuppressWarnings("deprecation")
 public class Home extends AppCompatActivity
@@ -160,21 +167,44 @@ public class Home extends AppCompatActivity
         createContactDialog();
 
     }
-
+// Nick Altered
 
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
-                  /*  if(input.getText().length()==0) {
-                        Toast.makeText(getApplicationContext(), "Contact must have a name in order to be saved. Please name your contact or cancel.", Toast.LENGTH_LONG).show();
+                    String message = null;
+                    Encrypt sendMessage;
+                    sendMessage = null;
 
-                    }
+                   if(input.getText().length()==0) {
+                       Toast.makeText(getApplicationContext(), "Contact must have a name in order to be saved. Please name your contact or cancel.", Toast.LENGTH_LONG).show();
+
+
+
+                   }
                     else {
                         Toast.makeText(getApplicationContext(), "Name: " + input.getText() + " Key: " + new String(msg.getRecords()[0].getPayload()), Toast.LENGTH_LONG).show();
+
+                       sendMessage.setPublicKey(keys.getPublicKey());
+
+                       message = input.getText().toString();
+                       byte[] messageBytes = null;
+                       try {
+                           messageBytes = message.getBytes("ISO-8859-1");
+                           sendMessage.encrypt(messageBytes);
+                       }catch( UnsupportedEncodingException e) {
+                           System.out.println("Unsupported character set");
+                       }
+
+
+
+
+
                         break;
-                    }*/break;
+                    }
+                    break;
 
                 case DialogInterface.BUTTON_NEGATIVE:
                     //No button clicked
@@ -194,6 +224,9 @@ public class Home extends AppCompatActivity
         dialog.setTitle("New Message");
         dialog.setIcon(R.drawable.ic_mail);
         dialog.setMessage("\n").setPositiveButton("Send", dialogClickListener)
+
+
+
                 .setNegativeButton("Cancel", dialogClickListener);
 
         List<String> contactNames = new ArrayList<>();
@@ -291,6 +324,7 @@ public class Home extends AppCompatActivity
         builder.setView(input);
 
         builder.setMessage("New Contact Received! Please name your contact.").setPositiveButton("Continue", dialogClickListener)
+
                 .setNegativeButton("Cancel", dialogClickListener);
 
         final AlertDialog contactDialog = builder.create();
