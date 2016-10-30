@@ -166,6 +166,8 @@ public class BiometricActivity extends AppCompatActivity {
     public void startHome() {
         emailHandler = new EmailHandler(context);
 
+        //testing purposes, resets preferences each time app loads to re-create email
+        preferencesHandler.resetPreferences(context);
         //Check to see if the application has already assigned an email address
         if(emailHandler.getUniqueEmail() == null){
             //If null is returned, create email address.
