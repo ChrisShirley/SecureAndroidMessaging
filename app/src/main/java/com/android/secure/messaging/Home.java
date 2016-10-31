@@ -392,7 +392,7 @@ public class Home extends AppCompatActivity
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
                 Toast.makeText(context, threadAdapter.getItem(i)+"Selected", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(context, MessagingActivity.class);
-                intent.getExtras().putString("contact",threadAdapter.getItem(i));
+                intent.putExtra("contact",threadAdapter.getItem(i));
                 startActivity(intent);
             }
         });
