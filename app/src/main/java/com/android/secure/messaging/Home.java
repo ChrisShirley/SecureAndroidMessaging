@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -38,6 +39,7 @@ import com.android.secure.messaging.email.EmailHandler;
 import com.android.secure.messaging.keys.Decrypt;
 import com.android.secure.messaging.keys.Encrypt;
 import com.android.secure.messaging.keys.Keys;
+import com.android.secure.messaging.messaging.MessagingActivity;
 import com.android.secure.messaging.messaging.MessagingThreadHandler;
 import com.android.secure.messaging.nfc.NFCHandler;
 
@@ -285,7 +287,7 @@ public class Home extends AppCompatActivity
                 else {
 
 
-                    Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
                         boolean threadMatch = false;
                         for (Contact c : contacts) {
                             if (sp.getSelectedItem().toString().equals(c.getName())) {
@@ -382,11 +384,18 @@ public class Home extends AppCompatActivity
         myListView.invalidateViews();
     }
 
-    public void addThreads()
-    {
+    public void addThreads() {
         myListView = (ListView) this.findViewById(R.id.display_message_threads);
-        threadAdapter =   new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,android.R.id.text1, messagingThreads);
+        threadAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, messagingThreads);
         myListView.setAdapter(threadAdapter);
+        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> av, View view, int i, long l) {
+                Toast.makeText(context, threadAdapter.getItem(i)+"Selected", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(context, MessagingActivity.class);
+                intent.getExtras().putString("contact",threadAdapter.getItem(i));
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
