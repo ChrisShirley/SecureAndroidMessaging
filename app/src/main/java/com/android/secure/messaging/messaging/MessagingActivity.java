@@ -7,10 +7,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.android.secure.messaging.R;
-import com.android.secure.messaging.keys.Decrypt;
-import com.android.secure.messaging.keys.Keys;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
