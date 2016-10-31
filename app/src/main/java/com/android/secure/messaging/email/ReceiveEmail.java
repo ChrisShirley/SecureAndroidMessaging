@@ -1,6 +1,10 @@
 package com.android.secure.messaging.email;
 
 import android.os.AsyncTask;
+
+import com.android.secure.messaging.keys.Decrypt;
+import com.android.secure.messaging.keys.Keys;
+
 import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Folder;
@@ -17,8 +21,14 @@ public class ReceiveEmail extends AsyncTask<String, Void, Void> {
 
     final private String hostAddress = "secure.emailsrvr.com";
     final private int smtpPort = 587; //465
+    private static Decrypt decrypt;
+    private static Keys keys;
+
 
     private void readEmail(String checkEmailAddress, String password) throws Exception {
+        keys = keys.getInstance();
+        decrypt = new Decrypt(keys.getPrivateKey());
+
         Properties properties = System.getProperties();
         properties.put("mail.store.protocol", "imaps");
 
@@ -41,7 +51,12 @@ public class ReceiveEmail extends AsyncTask<String, Void, Void> {
             System.out.println("FROM:" + address.toString());
         }
 
-        System.out.println("Message Content: " + msg.getContent());
+        System.out.println("Original Message Content: " + msg.getContent().toString());
+
+        byte [] msgBytes = msg.getContent().toString().getBytes("ISO-8859-1");
+        byte [] temp = decrypt.decrypt(msgBytes);
+        String temp2 = new String(temp);
+        System.out.println("Newly Decrypted message is: " + temp2);
         System.out.println("SENT DATE:" + msg.getSentDate());
         System.out.println("SUBJECT:" + msg.getSubject());
 

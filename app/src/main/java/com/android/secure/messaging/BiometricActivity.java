@@ -173,12 +173,14 @@ public class BiometricActivity extends AppCompatActivity {
             //If null is returned, create email address.
             emailHandler.requestUniqueEmailAddress();
         }
+
         /*
         emailHandler.send("testaccount@secureandroidmessaging.com", preferencesHandler.getPreference(context,
                 preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(context,
                 preferencesHandler.getPasswordPrefName()), "this is a test");
-        emailHandler.read("testaccount@secureandroidmessaging.com", "Sweng501#");
         */
+        emailHandler.read("testaccount@secureandroidmessaging.com", "Sweng501#");
+
         Intent i = new Intent(context, Home.class);
         context.startActivity(i);
     }

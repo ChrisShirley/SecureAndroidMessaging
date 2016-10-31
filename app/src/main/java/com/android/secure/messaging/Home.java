@@ -35,6 +35,7 @@ import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
 import com.android.secure.messaging.contacts.ContactsActivity;
 import com.android.secure.messaging.email.EmailHandler;
+import com.android.secure.messaging.keys.Decrypt;
 import com.android.secure.messaging.keys.Encrypt;
 import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.messaging.MessagingThreadHandler;
@@ -65,6 +66,8 @@ public class Home extends AppCompatActivity
     private static List<String> messagingThreads;
     private  ListView myListView;
     private ArrayAdapter<String> threadAdapter;
+    private static Encrypt encrypt;
+    private static Decrypt decrypt;
 
     private NdefMessage msg;
     private  EditText input;
@@ -100,6 +103,9 @@ public class Home extends AppCompatActivity
         context = getApplicationContext();
         keys = Keys.getInstance();
         keys.getKeys(this.getApplicationContext());
+
+        encrypt = new Encrypt(keys.getPublicKey());
+        decrypt = new Decrypt(keys.getPrivateKey());
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcHandler = new NFCHandler(this,mNfcAdapter);
@@ -180,9 +186,6 @@ public class Home extends AppCompatActivity
 
                    if(input.getText().length()==0) {
                        Toast.makeText(getApplicationContext(), "Contact must have a name in order to be saved. Please name your contact or cancel.", Toast.LENGTH_LONG).show();
-
-
-
                    }
                     else {
                         Toast.makeText(getApplicationContext(), "Name: " + input.getText() + " Key: " + new String(msg.getRecords()[0].getPayload()), Toast.LENGTH_LONG).show();
@@ -197,11 +200,6 @@ public class Home extends AppCompatActivity
                        }catch( UnsupportedEncodingException e) {
                            System.out.println("Unsupported character set");
                        }
-
-
-
-
-
                         break;
                     }
                     break;
@@ -303,11 +301,26 @@ public class Home extends AppCompatActivity
                     else
                         Toast.makeText(getApplicationContext(), "Thread exists! Open and append thread", Toast.LENGTH_LONG).show();
 
+/*
+                    byte [] temp = encrypt.encrypt(message.getBytes());
+                    String temp2 = temp.toString();
+                    byte [] temp3 = decrypt.decrypt(temp);
+                    String temp4 = new String(temp3);
+                    String hold = "hold";
+                    temp = hold.getBytes();
+*/
+                    byte [] encryptedMsg = encrypt.encrypt(message.getBytes());
+                    String temp = null;
+                    try {
+                        temp = new String(encryptedMsg, "ISO-8859-1");
+                        System.out.println("Encrypted using ISO standard: " + temp);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
 
-
-                    /*emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
+                    emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
                             preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
-                            preferencesHandler.getPasswordPrefName()), message);*/
+                            preferencesHandler.getPasswordPrefName()), temp);
                 }
                 messageDialog.dismiss();
             }
