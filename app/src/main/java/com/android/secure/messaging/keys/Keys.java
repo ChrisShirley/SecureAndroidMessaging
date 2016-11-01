@@ -74,6 +74,8 @@ public class Keys {
     }
 
     public PublicKey getPublicKey(){
+        if(publicKey!=null)
+            return publicKey;
         String publicKeyString = sharedPreferences.getString("PublicKey", "");
         if(publicKeyString.isEmpty())
             return null;
@@ -100,6 +102,8 @@ public class Keys {
     }
 
     public PrivateKey getPrivateKey(){
+        if(privateKey!=null)
+            return privateKey;
         String privateKeyString = sharedPreferences.getString("PrivateKey", "");
         if(privateKeyString.isEmpty())
             return null;
