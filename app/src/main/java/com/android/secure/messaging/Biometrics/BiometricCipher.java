@@ -19,6 +19,7 @@ import javax.crypto.SecretKey;
 /**
  * Created by silanr on 9/27/2016.
  */
+
 public class BiometricCipher {
 
     private Cipher cipher;
