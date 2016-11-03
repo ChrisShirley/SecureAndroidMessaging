@@ -16,12 +16,15 @@ import com.android.secure.messaging.Biometrics.BiometricKeyGenerator;
 import com.android.secure.messaging.Biometrics.FingerprintHandler;
 import com.android.secure.messaging.Preferences.Preferences;
 import com.android.secure.messaging.Preferences.PreferencesHandler;
+import com.android.secure.messaging.email.Email;
 import com.android.secure.messaging.email.SendEmail;
 import com.android.secure.messaging.email.EmailGenerator;
 import com.android.secure.messaging.RandomStringGenerator.RandomStringGenerator;
 import com.android.secure.messaging.email.EmailHandler;
 
 import android.view.WindowManager;
+
+import java.util.ArrayList;
 
 public class BiometricActivity extends AppCompatActivity {
 
@@ -179,7 +182,21 @@ public class BiometricActivity extends AppCompatActivity {
                 preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(context,
                 preferencesHandler.getPasswordPrefName()), "this is a test");
         */
-        emailHandler.read("testaccount@secureandroidmessaging.com", "Sweng501#");
+
+        //emailHandler.read("testaccount@secureandroidmessaging.com", "Sweng501#");
+        //emailHandler.getReadEmails();
+       // ArrayList<Email> emailArrayList = emailHandler.getReadEmails();
+
+
+
+//        for (Email e : emailArrayList) {
+//            System.out.println("Message To: " + e.getTo());
+//            System.out.println("Message From: "  + e.getFrom());
+//            System.out.println("Message Message: " + e.getMessage());
+//            System.out.println("Message Timestamp : " + e.getTimestamp());
+//        }
+
+
 
         Intent i = new Intent(context, Home.class);
         context.startActivity(i);

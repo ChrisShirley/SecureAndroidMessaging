@@ -35,7 +35,9 @@ import com.android.secure.messaging.Preferences.PreferencesHandler;
 import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
 import com.android.secure.messaging.contacts.ContactsActivity;
+import com.android.secure.messaging.email.Email;
 import com.android.secure.messaging.email.EmailHandler;
+import com.android.secure.messaging.email.ReceiveEmail;
 import com.android.secure.messaging.keys.Decrypt;
 import com.android.secure.messaging.keys.Encrypt;
 import com.android.secure.messaging.keys.Keys;
@@ -52,6 +54,8 @@ import java.lang.String;
 
 
 import java.io.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 @SuppressWarnings("deprecation")
 public class Home extends AppCompatActivity
@@ -70,6 +74,7 @@ public class Home extends AppCompatActivity
     private ArrayAdapter<String> threadAdapter;
     private static Encrypt encrypt;
     private static Decrypt decrypt;
+    private EmailHandler emailHandler;
 
     private NdefMessage msg;
     private  EditText input;
@@ -122,6 +127,29 @@ public class Home extends AppCompatActivity
             addThreads();
 
         contactHandler.saveContact("Test Account", "testaccount@secureandroidmessaging.com", "1234451243");
+
+
+        emailHandler = new EmailHandler(context);
+        ArrayList<Email> emailArrayList = null;
+        try {
+            emailArrayList = emailHandler.readEmailsFrom("testaccount@secureandroidmessaging.com", "Sweng501#", "PkeIBWWWFm8Q@secureandroidmessaging.com");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        emailHandler.read("testaccount@secureandroidmessaging.com", "Sweng501#");
+//        while(emailArrayList == null){
+//            emailArrayList = emailHandler.getReadEmails();
+//        }
+        for (Email e : emailArrayList) {
+            System.out.println("Message To: " + e.getTo());
+            System.out.println("Message From: "  + e.getFrom());
+            System.out.println("Message Message: " + e.getMessage());
+            System.out.println("Message Timestamp : " + e.getTimestamp());
+        }
     }
 
 

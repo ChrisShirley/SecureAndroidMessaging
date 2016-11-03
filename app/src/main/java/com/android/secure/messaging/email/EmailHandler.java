@@ -7,12 +7,19 @@ import com.android.secure.messaging.Preferences.PreferencesHandler;
 import com.android.secure.messaging.RandomStringGenerator.RandomStringGenerator;
 import com.android.secure.messaging.database.DAO;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 /**
  * Created by christophershirley on 9/18/16.
  */
 public class EmailHandler {
 
     private  static DAO dao;
+    private static ArrayList<Email> emailArrayList;
     public static final String TABLE_MESSAGES = "messages";
 
     public static final String ID = "id";
@@ -42,7 +49,7 @@ public class EmailHandler {
     public EmailHandler(Context context)
     {
         mContext = context;
-        dao = new DAO(context,DATABASE_NAME,DATABASE_VERSION,MESSAGES_TABLE_CREATE);
+        //dao = new DAO(context,DATABASE_NAME,DATABASE_VERSION,MESSAGES_TABLE_CREATE);
     }
 
     public void send(String to, String from, String password, String message)
@@ -50,8 +57,17 @@ public class EmailHandler {
         sendEmail.execute(to, from, password, message);
     }
 
-    public void read(String checkEmailAddress, String password){
+    public ArrayList<Email> readAllEmails (String checkEmailAddress, String password) throws InterruptedException, ExecutionException{
         receiveEmail.execute(checkEmailAddress, password);
+        receiveEmail.get();
+        return receiveEmail.getEmailArray();
+    }
+
+    public ArrayList<Email> readEmailsFrom(String checkEmailAddress, String password, String fromAddress) throws Exception{
+        receiveEmail.execute(checkEmailAddress, password, fromAddress);
+        receiveEmail.get();
+        return receiveEmail.getEmailArray();
+
     }
 
     public String requestUniqueEmailAddress()
