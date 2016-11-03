@@ -15,7 +15,7 @@ public class EmailTest {
 
     @Before
     public void setUp() throws Exception {
-        email = new Email();
+
 
 
     }
@@ -26,11 +26,7 @@ public class EmailTest {
         TestCase.assertTrue(email.getMessage()!=null);
     }
 
-    @Test
-    public void getReceiver() throws Exception {
 
-        TestCase.assertTrue(email.getReceiver()!=null);
-    }
 
 
 
