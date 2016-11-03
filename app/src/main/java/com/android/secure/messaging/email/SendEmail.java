@@ -101,7 +101,7 @@ public class SendEmail extends AsyncTask<String, Void, Void> {
         InternetAddress toAddress;
         toAddress = new InternetAddress(sendFrom);
         email.addRecipient(Message.RecipientType.TO, toAddress);
-        email.setSubject("New Secure Message From: " + sendFrom + "To: " + sendTo);
+        email.setSubject("New Secure Message From: [" + sendFrom + "]" + " To: (" + sendTo + ")");
         email.setContent(multipart);
         email.setText(message);
 
