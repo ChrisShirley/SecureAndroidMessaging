@@ -77,8 +77,6 @@ public class SendEmail extends AsyncTask<String, Void, Void> {
         transport.sendMessage(email, email.getAllRecipients());
         transport.close();
 
-        sendToSelf(sendTo, sendFrom, password, message);
-
     }
 
     private void sendToSelf(String sendTo, String sendFrom, String password, String message) throws AddressException, MessagingException{
@@ -119,8 +117,10 @@ public class SendEmail extends AsyncTask<String, Void, Void> {
             String sendTo = params[0];
             String sendFrom = params[1];
             String password = params[2];
-            String message = params[3];
-            sendEmail(sendTo, sendFrom, password, message);
+            String encryptedMessageForContact = params[3];
+            String encryptedMessageForSelf = params[4];
+            sendEmail(sendTo, sendFrom, password, encryptedMessageForContact);
+            sendToSelf(sendTo, sendFrom, password, encryptedMessageForSelf);
         } catch (MessagingException e) {
             e.printStackTrace();
         }

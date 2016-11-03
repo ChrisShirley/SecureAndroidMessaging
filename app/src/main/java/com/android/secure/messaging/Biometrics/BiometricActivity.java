@@ -1,4 +1,4 @@
-package com.android.secure.messaging;
+package com.android.secure.messaging.Biometrics;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -14,8 +14,10 @@ import android.os.Bundle;
 import com.android.secure.messaging.Biometrics.BiometricCipher;
 import com.android.secure.messaging.Biometrics.BiometricKeyGenerator;
 import com.android.secure.messaging.Biometrics.FingerprintHandler;
+import com.android.secure.messaging.Home;
 import com.android.secure.messaging.Preferences.Preferences;
 import com.android.secure.messaging.Preferences.PreferencesHandler;
+import com.android.secure.messaging.R;
 import com.android.secure.messaging.email.Email;
 import com.android.secure.messaging.email.SendEmail;
 import com.android.secure.messaging.email.EmailGenerator;
@@ -168,9 +170,6 @@ public class BiometricActivity extends AppCompatActivity {
 
     public void startHome() {
         emailHandler = new EmailHandler(context);
-
-        //testing purposes, resets preferences each time app loads to re-create email
-        preferencesHandler.resetPreferences(context);
         //Check to see if the application has already assigned an email address
         if(emailHandler.getUniqueEmail() == null){
             //If null is returned, create email address.

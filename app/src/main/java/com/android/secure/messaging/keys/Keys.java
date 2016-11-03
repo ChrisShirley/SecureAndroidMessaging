@@ -128,4 +128,17 @@ public class Keys {
     public String getPrivateKeyAsString(){
         return sharedPreferences.getString("PrivateKey", "");
     }
+
+    public PublicKey convertStringToPublicKey(String publicKey) throws Exception {
+
+        byte[] sigBytes = Base64.decode(publicKey,Base64.DEFAULT);
+        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(sigBytes);
+        KeyFactory keyFactory = null;
+        try {
+            keyFactory = KeyFactory.getInstance("RSA");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+            return  keyFactory.generatePublic(x509KeySpec);
+    }
 }

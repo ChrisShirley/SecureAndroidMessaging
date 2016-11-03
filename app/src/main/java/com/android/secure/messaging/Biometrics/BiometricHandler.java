@@ -35,7 +35,7 @@ public class BiometricHandler extends Activity {
 
         ContextCompat.checkSelfPermission(mContext, Manifest.permission.USE_FINGERPRINT);
         biometricsAvailable = mFingerprintManager.isHardwareDetected();
-        System.out.println("Device has fingerprint scanner: " + biometricsAvailable);
+        //System.out.println("Device has fingerprint scanner: " + biometricsAvailable);
         return biometricsAvailable;
     }
 
@@ -45,7 +45,7 @@ public class BiometricHandler extends Activity {
             return false;
         }
         biometricsEnabled = mFingerprintManager.hasEnrolledFingerprints();
-        System.out.println("Device has fingerprints enrolled: " + biometricsEnabled);
+        //System.out.println("Device has fingerprints enrolled: " + biometricsEnabled);
         return biometricsEnabled;
     }
 

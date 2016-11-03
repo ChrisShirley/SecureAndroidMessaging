@@ -52,9 +52,9 @@ public class EmailHandler {
         //dao = new DAO(context,DATABASE_NAME,DATABASE_VERSION,MESSAGES_TABLE_CREATE);
     }
 
-    public void send(String to, String from, String password, String message)
+    public void send(String to, String from, String password, String encryptedMessageForContact, String encryptedMessageForSelf)
     {
-        sendEmail.execute(to, from, password, message);
+        sendEmail.execute(to, from, password, encryptedMessageForContact, encryptedMessageForSelf);
     }
 
     public ArrayList<Email> readAllEmails (String checkEmailAddress, String password) throws InterruptedException, ExecutionException{

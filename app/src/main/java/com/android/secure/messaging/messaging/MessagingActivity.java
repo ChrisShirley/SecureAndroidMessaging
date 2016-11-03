@@ -5,16 +5,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
 import android.widget.TextView;
-
+import com.android.secure.messaging.Preferences.Preferences;
+import com.android.secure.messaging.Preferences.PreferencesHandler;
 import com.android.secure.messaging.R;
-
+import com.android.secure.messaging.contacts.Contact;
+import com.android.secure.messaging.email.Email;
+import com.android.secure.messaging.email.EmailHandler;
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MessagingActivity extends AppCompatActivity {
 
-
-
+    private Contact contact;
+    private EmailHandler emailHandler;
+    private final Preferences preferencesHandler = new PreferencesHandler();
+    private final String CONTACT_EXTRA_NAME = "Contact";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,27 +31,52 @@ public class MessagingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_messaging);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        toolbar.setTitle(getIntent().getStringExtra("contact"));
+        contact = getContact(getIntent().getExtras());
+
+        toolbar.setTitle(contact.getName());
         setSupportActionBar(toolbar);
-        List<String> messages = new ArrayList<>();
+
+        emailHandler = new EmailHandler(this);
+        List<String> messages = getMessages();
+
 
         TextView textView = (TextView) findViewById(R.id.messaging_text_view);
-        textView.append(" Bob!");
-        //Get messages from server and decrypt
-        //messages = getMessages();
 
-        //Add messages to database
+        for(String message : messages)
+            textView.append(message +"\n");
 
-        //displayMessages
-        textView.append("\n dummy message");
 
 
     }
 
+    private Contact getContact(Bundle contactBundle)
+    {
+        String jsonMyObject = null;
+        if (contactBundle != null) {
+            jsonMyObject = contactBundle.getString(CONTACT_EXTRA_NAME);
+        }
+       return new Gson().fromJson(jsonMyObject, Contact.class);
+    }
+
     private List<String> getMessages()
     {
-        List<String> serverMessages = new ArrayList<>();
-        //Get messages from the server
+        List<String> allMessages = new ArrayList<>();
+        List<Email> emails = getEmailsFromServer();
+        if(emails!=null)
+            for(Email email : emails)
+                allMessages.add(email.getFrom()+" "+email.getTimestamp()+": "+ email.getMessage());
+        return allMessages;
+    }
+
+    private List<Email> getEmailsFromServer()
+    {
+        List<Email> serverMessages = new ArrayList<>();
+
+        try {
+           serverMessages = emailHandler.readEmailsFrom(preferencesHandler.getEmailPrefName(),preferencesHandler.getPasswordPrefName(),contact.getEmail());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return serverMessages;
 

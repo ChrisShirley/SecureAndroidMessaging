@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.text.Editable;
+import android.util.Base64;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -44,9 +45,12 @@ import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.messaging.MessagingActivity;
 import com.android.secure.messaging.messaging.MessagingThreadHandler;
 import com.android.secure.messaging.nfc.NFCHandler;
+import com.google.gson.Gson;
 
 import android.view.WindowManager;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,12 +61,15 @@ import java.io.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 @SuppressWarnings("deprecation")
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NfcAdapter.CreateNdefMessageCallback {
 
     private static Keys keys;
-    private  NFCHandler nfcHandler;
+    private NFCHandler nfcHandler;
     private Context context;
     private static NfcAdapter mNfcAdapter;
     private static ContactHandler contactHandler;
@@ -70,14 +77,14 @@ public class Home extends AppCompatActivity
     private final Preferences preferencesHandler = new PreferencesHandler();
     private static List<Contact> contacts;
     private static List<String> messagingThreads;
-    private  ListView myListView;
+    private ListView myListView;
     private ArrayAdapter<String> threadAdapter;
     private static Encrypt encrypt;
     private static Decrypt decrypt;
     private EmailHandler emailHandler;
 
     private NdefMessage msg;
-    private  EditText input;
+    private EditText input;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,24 +122,31 @@ public class Home extends AppCompatActivity
         decrypt = new Decrypt(keys.getPrivateKey());
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        nfcHandler = new NFCHandler(this,mNfcAdapter);
-        if(nfcHandler.deviceHasNFC())
+        nfcHandler = new NFCHandler(this, mNfcAdapter);
+        if (nfcHandler.deviceHasNFC())
             mNfcAdapter.setNdefPushMessageCallback(this, this);
 
 
         contactHandler = new ContactHandler(this);
         messagingThreadHandler = new MessagingThreadHandler(this);
         messagingThreads = messagingThreadHandler.getAllThreads();
-        if(!messagingThreads.isEmpty())
+        if (!messagingThreads.isEmpty())
             addThreads();
 
-        contactHandler.saveContact("Test Account", "testaccount@secureandroidmessaging.com", "1234451243");
+        //contactHandler.saveContact("Test Account", "testaccount@secureandroidmessaging.com", "1234451243");
+        contactHandler.saveContact("Ryan" , "lkAsZTaJuDBf@secureandroidmessaging.com", "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArjE0bq9UkqU+H6wS24+UgzyC/cxwRkcd" +
+                "kfd/LSHbQRhqqkJrwk/XKz5K2GeuTT9veHsc13LisOR0yKcrY9XFZcPZtiGVDRpybL13zjF++WhD" +
+                "cy8AXwUcYc/69JnXeQcHnllNyQ5Bl+sokBiqRUcmdJpwn3rZKwrDl/tG7LbOa4GpnY+jFTAaY9It" +
+                "VOmKaYZub9IdQs+iALekxbSEaBFYrSVChBIYDH7eIenNy3fx070zBfgLTwxZK2HZi0fpsAqXvh6T" +
+                "khQgk3Se7qTnVQXj4NOJBsh5dJrkjMcrMEePdE7Yhpkf/0pxW0bWnxEGkOveuYVzCoo5yjNCyCBC" +
+                "Op0ThwIDAQAB");
 
 
         emailHandler = new EmailHandler(context);
         ArrayList<Email> emailArrayList = null;
         try {
-            emailArrayList = emailHandler.readEmailsFrom("testaccount@secureandroidmessaging.com", "Sweng501#", "PkeIBWWWFm8Q@secureandroidmessaging.com");
+            emailArrayList = emailHandler.readAllEmails(preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()),
+                    preferencesHandler.getPreference(context, preferencesHandler.getPasswordPrefName()));
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -140,10 +154,7 @@ public class Home extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        emailHandler.read("testaccount@secureandroidmessaging.com", "Sweng501#");
-//        while(emailArrayList == null){
-//            emailArrayList = emailHandler.getReadEmails();
-//        }
+
         for (Email e : emailArrayList) {
             System.out.println("Message To: " + e.getTo());
             System.out.println("Message From: "  + e.getFrom());
@@ -165,8 +176,8 @@ public class Home extends AppCompatActivity
 
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
-        String text = ("Public Key: "+keys.getPublicKeyAsString());
-        return new NdefMessage( NdefRecord.createApplicationRecord(text));
+        String text = ("Public Key: " + keys.getPublicKeyAsString());
+        return new NdefMessage(NdefRecord.createApplicationRecord(text));
 
     }
 
@@ -174,12 +185,13 @@ public class Home extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
-        /**/PendingIntent pi = PendingIntent.getActivity(
+        /**/
+        PendingIntent pi = PendingIntent.getActivity(
                 this,
                 0,
                 new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
                 0);
-        if(mNfcAdapter!=null)
+        if (mNfcAdapter != null)
             mNfcAdapter.enableForegroundDispatch(this, pi, null, null);
 
         // Check to see that the Activity started due to an Android Beam
@@ -195,7 +207,7 @@ public class Home extends AppCompatActivity
         Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
                 NfcAdapter.EXTRA_NDEF_MESSAGES);
         // only one message sent during the beam
-         msg = (NdefMessage) rawMsgs[0];
+        msg = (NdefMessage) rawMsgs[0];
         // record 0 contains the MIME type, record 1 is the AAR, if present
         //Toast.makeText(this,new String(msg.getRecords()[0].getPayload()),Toast.LENGTH_LONG).show();
 
@@ -208,28 +220,27 @@ public class Home extends AppCompatActivity
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            switch (which){
+            switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    String message = null;
-                    Encrypt sendMessage;
-                    sendMessage = null;
+//                    String message = null;
+//                    Encrypt sendMessage;
+//                    sendMessage = null;
 
-                   if(input.getText().length()==0) {
-                       Toast.makeText(getApplicationContext(), "Contact must have a name in order to be saved. Please name your contact or cancel.", Toast.LENGTH_LONG).show();
-                   }
-                    else {
+                    if (input.getText().length() == 0) {
+                        Toast.makeText(getApplicationContext(), "Contact must have a name in order to be saved. Please name your contact or cancel.", Toast.LENGTH_LONG).show();
+                    } else {
                         Toast.makeText(getApplicationContext(), "Name: " + input.getText() + " Key: " + new String(msg.getRecords()[0].getPayload()), Toast.LENGTH_LONG).show();
 
-                       sendMessage.setPublicKey(keys.getPublicKey());
+                        //sendMessage.setPublicKey(keys.getPublicKey());
 
-                       message = input.getText().toString();
-                       byte[] messageBytes = null;
-                       try {
-                           messageBytes = message.getBytes("ISO-8859-1");
-                           sendMessage.encrypt(messageBytes);
-                       }catch( UnsupportedEncodingException e) {
-                           System.out.println("Unsupported character set");
-                       }
+//                       message = input.getText().toString();
+//                       byte[] messageBytes = null;
+//                       try {
+//                           messageBytes = message.getBytes("ISO-8859-1");
+//                           sendMessage.encrypt(messageBytes);
+//                       }catch( UnsupportedEncodingException e) {
+//                           System.out.println("Unsupported character set");
+//                       }
                         break;
                     }
                     break;
@@ -242,11 +253,9 @@ public class Home extends AppCompatActivity
     };
 
 
+    public void createMessageDialog() {
 
-    public void createMessageDialog()
-    {
-
-        final String  selectContact = "Select Contact";
+        final String selectContact = "Select Contact";
         //Make new Dialog
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("New Message");
@@ -254,21 +263,18 @@ public class Home extends AppCompatActivity
         dialog.setMessage("\n").setPositiveButton("Send", dialogClickListener)
 
 
-
                 .setNegativeButton("Cancel", dialogClickListener);
 
         List<String> contactNames = new ArrayList<>();
         contactNames.add(selectContact);
-        if(contacts!=null)
-            contacts.clear();
-        contacts = contactHandler.getAllContacts();
+        getContacts();
 
-        if(contacts.isEmpty()) {
+        if (contacts.isEmpty()) {
             Toast.makeText(context, "No Friends Detected", Toast.LENGTH_LONG).show();
             return;
         }
 
-        for(Contact c : contacts)
+        for (Contact c : contacts)
             contactNames.add(c.getName());
         Context context = this;
         LinearLayout layout = new LinearLayout(context);
@@ -297,37 +303,33 @@ public class Home extends AppCompatActivity
         messageDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 EmailHandler emailHandler = new EmailHandler(getApplicationContext());
-                String sendToEmailAddress = null;
-                String contactName = null;
+                Contact messagingContact = null;
                 String message = messageBox.getText().toString();
 
 
-                if(sp.getSelectedItem().toString().equals(selectContact)) {
+                if (sp.getSelectedItem().toString().equals(selectContact)) {
                     Toast.makeText(getApplicationContext(), "Please select a contact", Toast.LENGTH_LONG).show();
                     return;
-                }
-
-                else if(messageBox.getText().toString().trim().isEmpty()) {
+                } else if (messageBox.getText().toString().trim().isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Please enter a message", Toast.LENGTH_LONG).show();
                     return;
-                }
-                else {
+                } else {
 
 
                     //Toast.makeText(getApplicationContext(), "Send Message to encryption!", Toast.LENGTH_LONG).show();
-                        boolean threadMatch = false;
-                        for (Contact c : contacts) {
-                            if (sp.getSelectedItem().toString().equals(c.getName())) {
-                                contactName = c.getName();
-                                sendToEmailAddress = c.getEmail();
-                                for(String messagingThread : messagingThreads)
-                                    if(contactName.equals(messagingThread))
-                                        threadMatch = true;
-                            }
+                    boolean threadMatch = false;
+                    for (Contact c : contacts) {
+                        if (sp.getSelectedItem().toString().equals(c.getName())) {
+                            messagingContact = c;
+                            for (String messagingThread : messagingThreads)
+                                if (messagingContact.getName().equals(messagingThread))
+                                    threadMatch = true;
                         }
-                    if((!threadMatch) && (contactName!=null))
-                        addNewThread(contactName);
+                    }
+                    if ((!threadMatch) && (messagingContact != null))
+                        addNewThread(messagingContact.getName());
                     else
                         Toast.makeText(getApplicationContext(), "Thread exists! Open and append thread", Toast.LENGTH_LONG).show();
 
@@ -339,26 +341,45 @@ public class Home extends AppCompatActivity
                     String hold = "hold";
                     temp = hold.getBytes();
 */
-                    byte [] encryptedMsg = encrypt.encrypt(message.getBytes());
-                    String temp = null;
-                    try {
-                        temp = new String(encryptedMsg, "ISO-8859-1");
-                        System.out.println("Encrypted using ISO standard: " + temp);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
 
-                    emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
-                            preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
-                            preferencesHandler.getPasswordPrefName()), temp);
+
+                    if (messagingContact != null) {
+
+                        byte[] encryptedMsgForSelf = encrypt.encrypt(message.getBytes());
+                        String messageForSelf = null;
+                        try {
+                            messageForSelf = new String(encryptedMsgForSelf, "ISO-8859-1");
+                            System.out.println("Encrypted using ISO standard: " + messageForSelf);
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+
+                        Encrypt encryptForContact = null;
+                        try {
+                            encryptForContact = new Encrypt(keys.convertStringToPublicKey(messagingContact.getKey()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        byte[] encryptedMsg = encryptForContact.encrypt(message.getBytes());
+                        String messageForContact = null;
+                        try {
+                            messageForContact = new String(encryptedMsg, "ISO-8859-1");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+
+                        emailHandler.send(messagingContact.getEmail(), preferencesHandler.getPreference(getApplicationContext(),
+                                preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
+                                preferencesHandler.getPasswordPrefName()), messageForContact, messageForSelf);
+                        startMessagingActivity(messagingContact.getName());
+                    }
                 }
                 messageDialog.dismiss();
             }
         });
     }
 
-    public void createContactDialog()
-    {
+    public void createContactDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add Contact");
 
@@ -380,10 +401,9 @@ public class Home extends AppCompatActivity
                 // if EditText is empty disable closing on possitive button
                 if (!wantToCloseDialog) {
                     Toast.makeText(getApplicationContext(), "Name: " + input.getText() + " Key: " + new String(msg.getRecords()[0].getPayload()), Toast.LENGTH_LONG).show();
-                    contactHandler.saveContact(input.getText().toString(),"test@test.com", new String(msg.getRecords()[0].getPayload()));
+                    contactHandler.saveContact(input.getText().toString(), "test@test.com", new String(msg.getRecords()[0].getPayload()));
                     contactDialog.dismiss();
-                }
-                else {
+                } else {
 
                     Toast.makeText(getApplicationContext(), "Contact must have a name in order to be saved. Please name your contact or cancel.", Toast.LENGTH_LONG).show();
                 }
@@ -394,23 +414,22 @@ public class Home extends AppCompatActivity
             @Override
             public void onClick(View v) {
 
-                    contactDialog.dismiss();
+                contactDialog.dismiss();
             }
         });
 
     }
 
-    public void addNewThread(String name)
-    {
+    public void addNewThread(String name) {
         messagingThreadHandler.saveThread(name);
-        if(threadAdapter==null) {
+        if (threadAdapter == null) {
             messagingThreads = messagingThreadHandler.getAllThreads();
             addThreads();
-        }
-        else
+        } else
             threadAdapter.add(name);
         myListView.invalidateViews();
     }
+
 
     public void addThreads() {
         myListView = (ListView) this.findViewById(R.id.display_message_threads);
@@ -418,12 +437,34 @@ public class Home extends AppCompatActivity
         myListView.setAdapter(threadAdapter);
         myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-                Toast.makeText(context, threadAdapter.getItem(i)+"Selected", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(context, MessagingActivity.class);
-                intent.putExtra("contact",threadAdapter.getItem(i));
-                startActivity(intent);
+                startMessagingActivity(threadAdapter.getItem(i));
             }
         });
+    }
+
+    protected void startMessagingActivity(String contactName) {
+        Intent intent = new Intent(context, MessagingActivity.class);
+        getContacts();
+        intent.putExtra("Contact", new Gson().toJson(getChosenContact(contactName)));
+        startActivity(intent);
+    }
+
+    public Contact getChosenContact(String contactName) {
+        Contact contact;
+        for (Contact c : contacts) {
+            if (contactName.equals(c.getName())) {
+                return c;
+            }
+        }
+        return null;
+
+    }
+
+    protected void getContacts() {
+        if (contacts != null)
+            contacts.clear();
+        contacts = contactHandler.getAllContacts();
+
     }
 
     @Override
@@ -482,9 +523,8 @@ public class Home extends AppCompatActivity
         }
     }
 
-    public void startNFCHandler()
-    {
-        if(nfcHandler.deviceHasNFC())
+    public void startNFCHandler() {
+        if (nfcHandler.deviceHasNFC())
             nfcHandler.isNFCEnabled();
         else {
             nfcHandler.noNFC(this);

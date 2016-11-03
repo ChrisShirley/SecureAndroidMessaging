@@ -34,7 +34,7 @@ public class SignatureGenerator {
    */
     private void formatDate() {
         formattedDate = simpleDateFormat.format(date.getTime());
-        System.out.println("This is the date: " + formattedDate);
+        //System.out.println("This is the date: " + formattedDate);
     }
 
     /*
