@@ -7,18 +7,22 @@ import com.android.secure.messaging.contacts.Contact;
  */
 public class Email {
 
-    Email()
-    {
+    String to;
+    String from;
+    String message;
+    String timestamp;
 
+    Email(String to, String from, String message, String timestamp)
+    {
+        this.to = to;
+        this.from = from;
+        this.message = message;
+        this.timestamp = timestamp;
     }
 
-    String getMessage()
-    {
-        return null;
-    }
+    public String getTo(){ return to; }
+    public String getFrom(){ return from; }
+    public String getMessage() { return message; }
+    public String getTimestamp() { return timestamp; }
 
-    Contact getReceiver()
-    {
-        return null;
-    }
 }
