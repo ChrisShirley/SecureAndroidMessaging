@@ -5,7 +5,6 @@ import android.content.Context;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.CancellationSignal;
 import android.widget.Toast;
-import com.android.secure.messaging.BiometricActivity;
 
 /**
  * Created by Ryan on 10/2/16.

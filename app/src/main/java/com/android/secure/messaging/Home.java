@@ -44,6 +44,7 @@ import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.messaging.MessagingActivity;
 import com.android.secure.messaging.messaging.MessagingThreadHandler;
 import com.android.secure.messaging.nfc.NFCHandler;
+import com.google.gson.Gson;
 
 import android.view.WindowManager;
 
@@ -259,9 +260,7 @@ public class Home extends AppCompatActivity
 
         List<String> contactNames = new ArrayList<>();
         contactNames.add(selectContact);
-        if(contacts!=null)
-            contacts.clear();
-        contacts = contactHandler.getAllContacts();
+        getContacts();
 
         if(contacts.isEmpty()) {
             Toast.makeText(context, "No Friends Detected", Toast.LENGTH_LONG).show();
@@ -298,8 +297,7 @@ public class Home extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 EmailHandler emailHandler = new EmailHandler(getApplicationContext());
-                String sendToEmailAddress = null;
-                String contactName = null;
+                Contact messagingContact = null;
                 String message = messageBox.getText().toString();
 
 
@@ -319,15 +317,14 @@ public class Home extends AppCompatActivity
                         boolean threadMatch = false;
                         for (Contact c : contacts) {
                             if (sp.getSelectedItem().toString().equals(c.getName())) {
-                                contactName = c.getName();
-                                sendToEmailAddress = c.getEmail();
+                                messagingContact = c;
                                 for(String messagingThread : messagingThreads)
-                                    if(contactName.equals(messagingThread))
+                                    if(messagingContact.getName().equals(messagingThread))
                                         threadMatch = true;
                             }
                         }
-                    if((!threadMatch) && (contactName!=null))
-                        addNewThread(contactName);
+                    if((!threadMatch) && (messagingContact!=null))
+                        addNewThread(messagingContact.getName());
                     else
                         Toast.makeText(getApplicationContext(), "Thread exists! Open and append thread", Toast.LENGTH_LONG).show();
 
@@ -338,19 +335,21 @@ public class Home extends AppCompatActivity
                     String temp4 = new String(temp3);
                     String hold = "hold";
                     temp = hold.getBytes();
-*/
-                    byte [] encryptedMsg = encrypt.encrypt(message.getBytes());
-                    String temp = null;
-                    try {
-                        temp = new String(encryptedMsg, "ISO-8859-1");
-                        System.out.println("Encrypted using ISO standard: " + temp);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
+*/                  if(messagingContact!=null) {
+                        byte[] encryptedMsg = encrypt.encrypt(message.getBytes());
+                        String temp = null;
+                        try {
+                            temp = new String(encryptedMsg, "ISO-8859-1");
+                            System.out.println("Encrypted using ISO standard: " + temp);
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
 
-                    emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
-                            preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
-                            preferencesHandler.getPasswordPrefName()), temp);
+                        emailHandler.send(messagingContact.getEmail(), preferencesHandler.getPreference(getApplicationContext(),
+                                preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
+                                preferencesHandler.getPasswordPrefName()), temp);
+                        startMessagingActivity(messagingContact.getName());
+                    }
                 }
                 messageDialog.dismiss();
             }
@@ -412,18 +411,44 @@ public class Home extends AppCompatActivity
         myListView.invalidateViews();
     }
 
+
     public void addThreads() {
         myListView = (ListView) this.findViewById(R.id.display_message_threads);
         threadAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, messagingThreads);
         myListView.setAdapter(threadAdapter);
         myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-                Toast.makeText(context, threadAdapter.getItem(i)+"Selected", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(context, MessagingActivity.class);
-                intent.putExtra("contact",threadAdapter.getItem(i));
-                startActivity(intent);
+                startMessagingActivity(threadAdapter.getItem(i));
             }
         });
+    }
+
+    protected void startMessagingActivity(String contactName)
+    {
+        Intent intent = new Intent(context, MessagingActivity.class);
+        getContacts();
+        intent.putExtra("Contact", new Gson().toJson(getChosenContact(contactName)));
+        startActivity(intent);
+    }
+
+    public Contact getChosenContact(String contactName)
+    {
+        Contact contact;
+        for (Contact c : contacts) {
+            if (contactName.equals(c.getName())) {
+                return  c;
+            }
+        }
+        return null;
+
+    }
+
+    protected void getContacts()
+    {
+        if(contacts!=null)
+            contacts.clear();
+        contacts = contactHandler.getAllContacts();
+
     }
 
     @Override
