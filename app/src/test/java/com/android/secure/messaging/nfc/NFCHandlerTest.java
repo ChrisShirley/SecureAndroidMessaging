@@ -41,6 +41,4 @@ public class NFCHandlerTest {
         TestCase.assertTrue(nfcHandler.deviceHasNFC());
     }
 
-
-
 }
