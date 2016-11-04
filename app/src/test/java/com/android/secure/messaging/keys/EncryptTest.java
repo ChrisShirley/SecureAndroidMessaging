@@ -22,8 +22,7 @@ import static org.junit.Assert.*;
  * Created by AJ on 10/31/2016.
  */
 public class EncryptTest {
-    // Create Keys object "uKeys"
-    Keys uKeys = Keys.getInstance();
+
     // Create Encrypt object "uEncrypt"
     Encrypt uEncrypt;
 
@@ -45,8 +44,7 @@ public class EncryptTest {
         //uEncrypt.setPublicKey(publicKey);
     }
 
-    public byte[] uCipherTestStr;
-    public byte[] uCipherCompStr;
+
 
     @Test
     public void encrypt() throws Exception {

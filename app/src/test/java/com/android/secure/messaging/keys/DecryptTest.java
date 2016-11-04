@@ -16,8 +16,7 @@ import static org.junit.Assert.*;
  * Created by AJ on 11/1/2016.
  */
 public class DecryptTest {
-    // Create Keys object "uKeys"
-    Keys uKeys = Keys.getInstance();
+
     // Create Encrypt object "uEncrypt"
     Encrypt uEncrypt;
     // Create Decrypt object "uDecrypt"
@@ -37,8 +36,7 @@ public class DecryptTest {
         uDecrypt = new Decrypt(privateKey);
     }
 
-    public byte[] uEncryptedTestStr;
-    public byte[] uDecryptedTestStr;
+
 
     @Test
     public void decrypt() throws Exception {
