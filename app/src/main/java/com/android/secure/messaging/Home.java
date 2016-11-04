@@ -150,11 +150,13 @@ public class Home extends AppCompatActivity
 //        while(emailArrayList == null){
 //            emailArrayList = emailHandler.getReadEmails();
 //        }
-        for (Email e : emailArrayList) {
-            System.out.println("Message To: " + e.getTo());
-            System.out.println("Message From: "  + e.getFrom());
-            System.out.println("Message Message: " + e.getMessage());
-            System.out.println("Message Timestamp : " + e.getTimestamp());
+        if(emailArrayList!=null) {
+            for (Email e : emailArrayList) {
+                System.out.println("Message To: " + e.getTo());
+                System.out.println("Message From: " + e.getFrom());
+                System.out.println("Message Message: " + e.getMessage());
+                System.out.println("Message Timestamp : " + e.getTimestamp());
+            }
         }
     }
 
@@ -172,7 +174,7 @@ public class Home extends AppCompatActivity
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         //String text = ("Public Key: "+keys.getPublicKeyAsString());
-        NdefRecord [] records = {NdefRecord.createApplicationRecord(keys.getPrivateKeyAsString())
+        NdefRecord [] records = {NdefRecord.createApplicationRecord(keys.getPublicKeyAsString())
                 ,NdefRecord.createApplicationRecord(preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getEmailPrefName()))};
         return new NdefMessage( records);
 
@@ -361,6 +363,7 @@ public class Home extends AppCompatActivity
                     emailHandler.send(messagingContact.getEmail(), preferencesHandler.getPreference(getApplicationContext(),
                             preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
                             preferencesHandler.getPasswordPrefName()), messageForContact, messageForSelf);
+                    startMessagingActivity(messagingContact.getName());
                 }
                 messageDialog.dismiss();
             }
@@ -390,7 +393,7 @@ public class Home extends AppCompatActivity
                 // if EditText is empty disable closing on possitive button
                 if (!wantToCloseDialog) {
                     Toast.makeText(getApplicationContext(), "Name: " + input.getText() + " Key: " + new String(msg.getRecords()[0].getPayload()), Toast.LENGTH_LONG).show();
-                    contactHandler.saveContact(input.getText().toString(),"test@test.com", new String(msg.getRecords()[0].getPayload()));
+                    contactHandler.saveContact(input.getText().toString(),new String(msg.getRecords()[1].getPayload()), new String(msg.getRecords()[0].getPayload()));
                     contactDialog.dismiss();
                 }
                 else {

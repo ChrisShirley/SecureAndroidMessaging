@@ -73,7 +73,8 @@ public class MessagingActivity extends AppCompatActivity {
         List<Email> serverMessages = new ArrayList<>();
 
         try {
-           serverMessages = emailHandler.readEmailsFrom(preferencesHandler.getEmailPrefName(),preferencesHandler.getPasswordPrefName(),contact.getEmail());
+           serverMessages = emailHandler.readEmailsFrom(preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getEmailPrefName())
+                   ,preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getPasswordPrefName()),contact.getEmail());
         } catch (Exception e) {
             e.printStackTrace();
         }
