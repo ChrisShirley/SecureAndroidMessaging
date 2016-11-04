@@ -44,8 +44,7 @@ public class EncryptTest {
         //uEncrypt.setPublicKey(publicKey);
     }
 
-    public byte[] uCipherTestStr;
-    public byte[] uCipherCompStr;
+
 
     @Test
     public void encrypt() throws Exception {

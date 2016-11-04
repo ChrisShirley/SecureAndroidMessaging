@@ -36,8 +36,7 @@ public class DecryptTest {
         uDecrypt = new Decrypt(privateKey);
     }
 
-    public byte[] uEncryptedTestStr;
-    public byte[] uDecryptedTestStr;
+
 
     @Test
     public void decrypt() throws Exception {
