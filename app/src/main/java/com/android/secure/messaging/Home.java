@@ -300,6 +300,7 @@ public class Home extends AppCompatActivity
                 EmailHandler emailHandler = new EmailHandler(getApplicationContext());
                 String sendToEmailAddress = null;
                 String contactName = null;
+                String contactPublicKeyString = null;
                 String message = messageBox.getText().toString();
 
 
@@ -321,6 +322,7 @@ public class Home extends AppCompatActivity
                             if (sp.getSelectedItem().toString().equals(c.getName())) {
                                 contactName = c.getName();
                                 sendToEmailAddress = c.getEmail();
+                                contactPublicKeyString = c.getKey();
                                 for(String messagingThread : messagingThreads)
                                     if(contactName.equals(messagingThread))
                                         threadMatch = true;
@@ -331,26 +333,32 @@ public class Home extends AppCompatActivity
                     else
                         Toast.makeText(getApplicationContext(), "Thread exists! Open and append thread", Toast.LENGTH_LONG).show();
 
-/*
-                    byte [] temp = encrypt.encrypt(message.getBytes());
-                    String temp2 = temp.toString();
-                    byte [] temp3 = decrypt.decrypt(temp);
-                    String temp4 = new String(temp3);
-                    String hold = "hold";
-                    temp = hold.getBytes();
-*/
-                    byte [] encryptedMsg = encrypt.encrypt(message.getBytes());
-                    String temp = null;
+                    byte[] encryptedMsgForSelf = encrypt.encrypt(message.getBytes());
+                    String messageForSelf = null;
                     try {
-                        temp = new String(encryptedMsg, "ISO-8859-1");
-                        System.out.println("Encrypted using ISO standard: " + temp);
+                        messageForSelf = new String(encryptedMsgForSelf, "ISO-8859-1");
+                        System.out.println("Encrypted using ISO standard: " + messageForSelf);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                    Encrypt encryptForContact = null;
+                    try {
+                        encryptForContact = new Encrypt(keys.convertStringToPublicKey(contactPublicKeyString));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    byte[] encryptedMsg = encryptForContact.encrypt(message.getBytes());
+                    String messageForContact = null;
+                    try {
+                        messageForContact = new String(encryptedMsg, "ISO-8859-1");
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
 
                     emailHandler.send(sendToEmailAddress, preferencesHandler.getPreference(getApplicationContext(),
                             preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
-                            preferencesHandler.getPasswordPrefName()), temp);
+                            preferencesHandler.getPasswordPrefName()), messageForContact, messageForSelf);
                 }
                 messageDialog.dismiss();
             }
