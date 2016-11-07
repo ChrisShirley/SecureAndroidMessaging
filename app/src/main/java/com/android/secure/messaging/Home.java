@@ -12,7 +12,6 @@ import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
-import android.text.Editable;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -29,34 +28,24 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.android.secure.messaging.Preferences.Preferences;
 import com.android.secure.messaging.Preferences.PreferencesHandler;
 import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
 import com.android.secure.messaging.contacts.ContactsActivity;
-import com.android.secure.messaging.email.Email;
 import com.android.secure.messaging.email.EmailHandler;
-import com.android.secure.messaging.email.ReceiveEmail;
-import com.android.secure.messaging.keys.Decrypt;
 import com.android.secure.messaging.keys.Encrypt;
 import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.messaging.MessagingActivity;
 import com.android.secure.messaging.messaging.MessagingThreadHandler;
 import com.android.secure.messaging.nfc.NFCHandler;
 import com.google.gson.Gson;
-
 import android.view.WindowManager;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import java.lang.String;
-
-
 import java.io.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+
 
 @SuppressWarnings("deprecation")
 public class Home extends AppCompatActivity
@@ -74,8 +63,7 @@ public class Home extends AppCompatActivity
     private  ListView myListView;
     private ArrayAdapter<String> threadAdapter;
     private static Encrypt encrypt;
-    private static Decrypt decrypt;
-    private EmailHandler emailHandler;
+    //private EmailHandler emailHandler;
 
     private NdefMessage msg;
     private  EditText input;
@@ -94,8 +82,6 @@ public class Home extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
                 createMessageDialog();
             }
         });
@@ -114,7 +100,7 @@ public class Home extends AppCompatActivity
         keys.getKeys(this.getApplicationContext());
 
         encrypt = new Encrypt(keys.getPublicKey());
-        decrypt = new Decrypt(keys.getPrivateKey());
+
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcHandler = new NFCHandler(this,mNfcAdapter);
@@ -128,7 +114,7 @@ public class Home extends AppCompatActivity
         if(!messagingThreads.isEmpty())
             addThreads();
 
-        contactHandler.saveContact("Test Account", "testaccount@secureandroidmessaging.com", "1234451243");
+        //contactHandler.saveContact("Test Account", "testaccount@secureandroidmessaging.com", "1234451243");
         contactHandler.saveContact("Ryan" , "lkAsZTaJuDBf@secureandroidmessaging.com", "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArjE0bq9UkqU+H6wS24+UgzyC/cxwRkcd" +
                 "kfd/LSHbQRhqqkJrwk/XKz5K2GeuTT9veHsc13LisOR0yKcrY9XFZcPZtiGVDRpybL13zjF++WhD" +
                 "cy8AXwUcYc/69JnXeQcHnllNyQ5Bl+sokBiqRUcmdJpwn3rZKwrDl/tG7LbOa4GpnY+jFTAaY9It" +
@@ -136,8 +122,8 @@ public class Home extends AppCompatActivity
                 "khQgk3Se7qTnVQXj4NOJBsh5dJrkjMcrMEePdE7Yhpkf/0pxW0bWnxEGkOveuYVzCoo5yjNCyCBC" +
                 "Op0ThwIDAQAB");
 
-        emailHandler = new EmailHandler(context);
-        ArrayList<Email> emailArrayList = null;
+        /*emailHandler = new EmailHandler(context);
+       /* ArrayList<Email> emailArrayList = null;
         try {
             emailArrayList = emailHandler.readEmailsFrom("testaccount@secureandroidmessaging.com", "Sweng501#", "PkeIBWWWFm8Q@secureandroidmessaging.com");
         } catch (InterruptedException e) {
@@ -146,19 +132,19 @@ public class Home extends AppCompatActivity
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 //        emailHandler.read("testaccount@secureandroidmessaging.com", "Sweng501#");
 //        while(emailArrayList == null){
 //            emailArrayList = emailHandler.getReadEmails();
 //        }
-        if(emailArrayList!=null) {
+        /*if(emailArrayList!=null) {
             for (Email e : emailArrayList) {
                 System.out.println("Message To: " + e.getTo());
                 System.out.println("Message From: " + e.getFrom());
                 System.out.println("Message Message: " + e.getMessage());
                 System.out.println("Message Timestamp : " + e.getTimestamp());
             }
-        }
+        }*/
     }
 
 
