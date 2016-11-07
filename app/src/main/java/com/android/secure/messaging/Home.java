@@ -80,6 +80,7 @@ public class Home extends AppCompatActivity
     private NdefMessage msg;
     private  EditText input;
 
+                                /*Activity Overrides*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,26 +163,6 @@ public class Home extends AppCompatActivity
 
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public NdefMessage createNdefMessage(NfcEvent event) {
-        //String text = ("Public Key: "+keys.getPublicKeyAsString());
-        NdefRecord [] records = {NdefRecord.createApplicationRecord(keys.getPublicKeyAsString())
-                ,NdefRecord.createApplicationRecord(preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getEmailPrefName()))};
-        return new NdefMessage( records);
-
-    }
-
-
-    @Override
     public void onResume() {
         super.onResume();
         /**/PendingIntent pi = PendingIntent.getActivity(
@@ -196,6 +177,84 @@ public class Home extends AppCompatActivity
 
     }
 
+                                /*Activity Navigation Overrides*/
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.transfer) {
+
+            startNFCHandler();
+        } else if (id == R.id.contacts) {
+            Intent intent = new Intent(this, ContactsActivity.class);
+            startActivity(intent);
+            //Toast.makeText(this,"Contacts Activity",Toast.LENGTH_LONG).show();
+
+        } /*else if (id == R.id.Settings) {
+
+        } else if (id == R.id.nav_help) {
+
+
+        }*/
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+                                /*NFC Overrides and helpers*/
+
+    @Override
+    public NdefMessage createNdefMessage(NfcEvent event) {
+        //String text = ("Public Key: "+keys.getPublicKeyAsString());
+        NdefRecord [] records = {NdefRecord.createApplicationRecord(keys.getPublicKeyAsString())
+                ,NdefRecord.createApplicationRecord(preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getEmailPrefName()))};
+        return new NdefMessage( records);
+
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        // onResume gets called after this to handle the intent
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            processIntent(intent);
+        }
+    }
 
     /**
      * Parses the NDEF Message from the intent and prints to the TextView
@@ -205,7 +264,7 @@ public class Home extends AppCompatActivity
         Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
                 NfcAdapter.EXTRA_NDEF_MESSAGES);
         // only one message sent during the beam
-         msg = (NdefMessage) rawMsgs[0];
+        msg = (NdefMessage) rawMsgs[0];
         // record 0 contains the MIME type, record 1 is the AAR, if present
         //Toast.makeText(this,new String(msg.getRecords()[0].getPayload()),Toast.LENGTH_LONG).show();
 
@@ -213,8 +272,21 @@ public class Home extends AppCompatActivity
         createContactDialog();
 
     }
-// Nick Altered
 
+    public void startNFCHandler()
+    {
+        if(nfcHandler.deviceHasNFC())
+            nfcHandler.isNFCEnabled();
+        else {
+            nfcHandler.noNFC(this);
+            //finish();
+            //System.exit(0);
+        }
+    }
+
+
+                                    /* Alert Dialog Methods for notifying the user of errors or to give instructions*/
+// Nick Altered
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -413,6 +485,7 @@ public class Home extends AppCompatActivity
 
     }
 
+                                   /*Messaging Thread Display Helpers*/
     public void addNewThread(String name)
     {
         messagingThreadHandler.saveThread(name);
@@ -424,7 +497,6 @@ public class Home extends AppCompatActivity
             threadAdapter.add(name);
         myListView.invalidateViews();
     }
-
 
     public void addThreads() {
         myListView = (ListView) this.findViewById(R.id.display_message_threads);
@@ -441,21 +513,11 @@ public class Home extends AppCompatActivity
     {
         Intent intent = new Intent(context, MessagingActivity.class);
         getContacts();
-        intent.putExtra("Contact", new Gson().toJson(getChosenContact(contactName)));
+        intent.putExtra("Contact", new Gson().toJson(messagingThreadHandler.getContact(contactName,contacts)));
         startActivity(intent);
     }
 
-    public Contact getChosenContact(String contactName)
-    {
-        Contact contact;
-        for (Contact c : contacts) {
-            if (contactName.equals(c.getName())) {
-                return  c;
-            }
-        }
-        return null;
-
-    }
+                                    /*Contacts Getter*/
 
     protected void getContacts()
     {
@@ -465,72 +527,7 @@ public class Home extends AppCompatActivity
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.transfer) {
-
-            startNFCHandler();
-        } else if (id == R.id.contacts) {
-            Intent intent = new Intent(this, ContactsActivity.class);
-            startActivity(intent);
-            //Toast.makeText(this,"Contacts Activity",Toast.LENGTH_LONG).show();
-
-        } else if (id == R.id.Settings) {
-
-        } else if (id == R.id.nav_help) {
-
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    public void onNewIntent(Intent intent) {
-        // onResume gets called after this to handle the intent
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-            processIntent(intent);
-        }
-    }
-
-    public void startNFCHandler()
-    {
-        if(nfcHandler.deviceHasNFC())
-            nfcHandler.isNFCEnabled();
-        else {
-            nfcHandler.noNFC(this);
-            //finish();
-            //System.exit(0);
-        }
-    }
 
 
 }

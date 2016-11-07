@@ -2,6 +2,7 @@ package com.android.secure.messaging.messaging;
 
 import android.content.Context;
 
+import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.database.DAO;
 
 import java.util.List;
@@ -33,9 +34,14 @@ public class MessagingThreadHandler {
 
 
 
-    boolean getContact(String name)
+    public Contact getContact(String contactName, List<Contact> contacts)
     {
-        return false;
+        for (Contact c : contacts) {
+            if (contactName.equals(c.getName())) {
+                return  c;
+            }
+        }
+        return null;
     }
 
     public List<String> getAllThreads()

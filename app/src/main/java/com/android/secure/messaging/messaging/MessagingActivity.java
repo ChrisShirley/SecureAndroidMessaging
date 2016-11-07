@@ -1,5 +1,7 @@
 package com.android.secure.messaging.messaging;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +21,9 @@ public class MessagingActivity extends AppCompatActivity {
 
     private Contact contact;
     private EmailHandler emailHandler;
+    private TextView textView;
+    private ProgressDialog dialog;
+    private List<String> messages;
     private final Preferences preferencesHandler = new PreferencesHandler();
     private final String CONTACT_EXTRA_NAME = "Contact";
 
@@ -31,22 +36,48 @@ public class MessagingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_messaging);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
+
         contact = getContact(getIntent().getExtras());
 
         toolbar.setTitle(contact.getName());
         setSupportActionBar(toolbar);
 
         emailHandler = new EmailHandler(this);
-        List<String> messages = getMessages();
 
 
-        TextView textView = (TextView) findViewById(R.id.messaging_text_view);
 
+        textView = (TextView) findViewById(R.id.messaging_text_view);
+        DownloadMessages downloadMessages = new DownloadMessages();
+        downloadMessages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+
+
+
+    }
+
+    private void createLoader()
+    {
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Please wait");
+        dialog.show();
+
+    }
+
+    private void updateView()
+    {
+        String newText = "";
         for(String message : messages)
-            textView.append(message +"\n");
+            newText += message +"\n";
 
+        MessagingActivity.this.textView.setText(textView.getText() + newText);
 
+    }
 
+    private void clearLoader()
+    {
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
     }
 
     private Contact getContact(Bundle contactBundle)
@@ -58,14 +89,21 @@ public class MessagingActivity extends AppCompatActivity {
        return new Gson().fromJson(jsonMyObject, Contact.class);
     }
 
-    private List<String> getMessages()
+    private void getMessages()
     {
         List<String> allMessages = new ArrayList<>();
         List<Email> emails = getEmailsFromServer();
         if(emails!=null)
-            for(Email email : emails)
-                allMessages.add(email.getFrom()+" "+email.getTimestamp()+": "+ email.getMessage());
-        return allMessages;
+            for(Email email : emails) {
+
+                if(email.getFrom().equals(contact.getEmail()))
+                     allMessages.add(email.getTimestamp()+" "+contact.getName() + ": " + email.getMessage());
+                else
+                    allMessages.add(email.getTimestamp()+" you: " + email.getMessage());
+            }
+
+        messages = allMessages;
+
     }
 
     private List<Email> getEmailsFromServer()
@@ -82,6 +120,30 @@ public class MessagingActivity extends AppCompatActivity {
         return serverMessages;
 
     }
+
+    private class DownloadMessages extends AsyncTask<String, Void, String> {
+       @Override
+       protected void onPreExecute(){
+           createLoader();
+       }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            getMessages();
+        if(messages!=null)
+            return "Messages Received";
+        else
+            return "Download Failed";
+
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        clearLoader();
+        updateView();
+    }
+}
+
 
 
 }
