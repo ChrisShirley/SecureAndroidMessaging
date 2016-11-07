@@ -14,7 +14,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
-import com.android.secure.messaging.messaging.MessagingThreadHandler;
+import com.android.secure.messaging.messaging.MThreadHandler;
 
 /**
  * @author Chris J. Shirley
@@ -83,8 +83,8 @@ public class DAO {
         if(database==null)
             open();
         ContentValues values = new ContentValues();
-        values.put(MessagingThreadHandler.NAME, name);
-        long id = database.insert(MessagingThreadHandler.TABLE_THREADS, null,
+        values.put(MThreadHandler.NAME, name);
+        long id = database.insert(MThreadHandler.TABLE_THREADS, null,
                 values);
         if(id==-1)
             return false;
@@ -95,7 +95,7 @@ public class DAO {
     public List<String> getAllThreads() {
         if(database==null)
             open();
-        Cursor cursor = database.rawQuery("SELECT  * FROM " + MessagingThreadHandler.TABLE_THREADS, null);
+        Cursor cursor = database.rawQuery("SELECT  * FROM " + MThreadHandler.TABLE_THREADS, null);
         List<String> threads = new ArrayList<>();;
         String threadName;
         if(cursor.moveToFirst()) {
@@ -150,7 +150,7 @@ public class DAO {
 
     private String cursorToName(Cursor databaseCursor)
     {
-        return databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(MessagingThreadHandler.NAME));
+        return databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(MThreadHandler.NAME));
     }
 
 

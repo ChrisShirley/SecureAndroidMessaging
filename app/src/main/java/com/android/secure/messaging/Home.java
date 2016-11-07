@@ -37,7 +37,7 @@ import com.android.secure.messaging.email.EmailHandler;
 import com.android.secure.messaging.keys.Encrypt;
 import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.messaging.MessagingActivity;
-import com.android.secure.messaging.messaging.MessagingThreadHandler;
+import com.android.secure.messaging.messaging.MThreadHandler;
 import com.android.secure.messaging.nfc.NFCHandler;
 import com.google.gson.Gson;
 import android.view.WindowManager;
@@ -56,7 +56,7 @@ public class Home extends AppCompatActivity
     private Context context;
     private static NfcAdapter mNfcAdapter;
     private static ContactHandler contactHandler;
-    private static MessagingThreadHandler messagingThreadHandler;
+    private static MThreadHandler mThreadHandler;
     private final Preferences preferencesHandler = new PreferencesHandler();
     private static List<Contact> contacts;
     private static List<String> messagingThreads;
@@ -109,8 +109,8 @@ public class Home extends AppCompatActivity
 
 
         contactHandler = new ContactHandler(this);
-        messagingThreadHandler = new MessagingThreadHandler(this);
-        messagingThreads = messagingThreadHandler.getAllThreads();
+        mThreadHandler = new MThreadHandler(this);
+        messagingThreads = mThreadHandler.getAllThreads();
         if(!messagingThreads.isEmpty())
             addThreads();
 
@@ -474,9 +474,9 @@ public class Home extends AppCompatActivity
                                    /*Messaging Thread Display Helpers*/
     public void addNewThread(String name)
     {
-        messagingThreadHandler.saveThread(name);
+        mThreadHandler.saveThread(name);
         if(threadAdapter==null) {
-            messagingThreads = messagingThreadHandler.getAllThreads();
+            messagingThreads = mThreadHandler.getAllThreads();
             addThreads();
         }
         else
@@ -499,7 +499,7 @@ public class Home extends AppCompatActivity
     {
         Intent intent = new Intent(context, MessagingActivity.class);
         getContacts();
-        intent.putExtra("Contact", new Gson().toJson(messagingThreadHandler.getContact(contactName,contacts)));
+        intent.putExtra("Contact", new Gson().toJson(mThreadHandler.getContact(contactName,contacts)));
         startActivity(intent);
     }
 

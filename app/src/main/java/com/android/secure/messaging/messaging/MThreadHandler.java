@@ -11,7 +11,7 @@ import java.util.List;
  * Created by cjs07f on 10/27/16.
  */
 
-public class MessagingThreadHandler {
+public class MThreadHandler {
     private  static DAO dao;
     public static final String TABLE_THREADS = "threads";
 
@@ -27,7 +27,7 @@ public class MessagingThreadHandler {
             + TABLE_THREADS + "(" +
             NAME + " text PRIMARY KEY);";
 
-    public MessagingThreadHandler(Context context)
+    public MThreadHandler(Context context)
     {
         dao = new DAO(context,DATABASE_NAME,DATABASE_VERSION,THREAD_TABLE_CREATE);
     }
