@@ -11,6 +11,7 @@ public class PreferencesHandler implements Preferences {
 
     private static final String emailPrefName = "SAMEmail";
     private static final String passwordPrefName = "SAMPassword";
+    private static final String EMAILCOUNTPREFNAME = "EmailCount";
 
     //private final String prefName = "samEmail";
 
@@ -51,6 +52,19 @@ public class PreferencesHandler implements Preferences {
         System.out.println("Just inserted: " + prefValue + " into: " + preferenceName);
     }
 
+    public void setPreference(Context context, String preferenceName, int prefValue) {
+        SharedPreferences sharedPreferences;
+        SharedPreferences.Editor editor;
+
+        sharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        editor.putInt(preferenceName, prefValue);
+        editor.commit();
+
+        System.out.println("Just inserted: " + prefValue + " into: " + preferenceName);
+    }
+
     @Override
     public String getPreference(Context context, String preferenceName) {
         SharedPreferences sharedPreferences;
@@ -73,4 +87,11 @@ public class PreferencesHandler implements Preferences {
         setPreference(context, getEmailPrefName(), null);
         setPreference(context, getPasswordPrefName(), null);
     }
+
+    @Override
+    public String getEmailCountPrefName(){
+        return EMAILCOUNTPREFNAME;
+
+    }
+
 }

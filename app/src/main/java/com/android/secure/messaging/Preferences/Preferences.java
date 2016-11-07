@@ -13,9 +13,14 @@ public interface Preferences {
 
     void setPreference(Context context, String preferenceName, String prefValue);
 
+    void setPreference(Context context, String preferenceName, int prefValue);
+
     String getPreference(Context context, String preferenceName);
 
     String getEmailPrefName();
 
     String getPasswordPrefName();
+
+    String getEmailCountPrefName();
+
 }

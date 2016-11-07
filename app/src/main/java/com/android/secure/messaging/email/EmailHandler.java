@@ -18,25 +18,25 @@ import java.util.concurrent.TimeoutException;
  */
 public class EmailHandler {
 
-    private  static DAO dao;
-    private static ArrayList<Email> emailArrayList;
-    public static final String TABLE_MESSAGES = "messages";
+    //private  static DAO dao;
+    //private static ArrayList<Email> emailArrayList;
+    //public static final String TABLE_MESSAGES = "messages";
 
-    public static final String ID = "id";
-    public static final String FROM = "from";
-    public static final String TO = "to";
-    public static final String TIMESTAMP = "timestamp";
-    public static final String MESSAGE = "message";
-    public static final String DATABASE_NAME = TABLE_MESSAGES+".db";
-    public static final int DATABASE_VERSION = 1;
-
-    private static final String MESSAGES_TABLE_CREATE = "create table "
-            + TABLE_MESSAGES + "(" +
-            ID + " text PRIMARY KEY, "+
-            TIMESTAMP +" text not null, "+
-            TO + " text not null, " +
-            FROM + " text not null, " +
-            MESSAGE +" text not null);";
+//    public static final String ID = "id";
+//    public static final String FROM = "from";
+//    public static final String TO = "to";
+//    public static final String TIMESTAMP = "timestamp";
+//    public static final String MESSAGE = "message";
+//    public static final String DATABASE_NAME = TABLE_MESSAGES+".db";
+//    public static final int DATABASE_VERSION = 1;
+//
+//    private static final String MESSAGES_TABLE_CREATE = "create table "
+//            + TABLE_MESSAGES + "(" +
+//            ID + " text PRIMARY KEY, "+
+//            TIMESTAMP +" text not null, "+
+//            TO + " text not null, " +
+//            FROM + " text not null, " +
+//            MESSAGE +" text not null);";
 
     final private String DOMAIN = "@secureandroidmessaging.com";
     SendEmail sendEmail = new SendEmail();
@@ -44,6 +44,7 @@ public class EmailHandler {
     RandomStringGenerator rsg = new RandomStringGenerator();
     EmailGenerator emailGenerator = new EmailGenerator();
     Preferences preferences = new PreferencesHandler();
+    EmailCount emailCount = new EmailCount();
     Context mContext;
 
     public EmailHandler(Context context)
@@ -83,5 +84,16 @@ public class EmailHandler {
     public String getUniqueEmail()
     {
         return preferences.getPreference(mContext, preferences.getEmailPrefName());
+    }
+
+    public boolean newMessages(String checkEmailAddress, String password){
+        int oldMessageCount = Integer.parseInt(preferences.getPreference(mContext, preferences.getEmailCountPrefName()));
+        int newMessageCount = emailCount.countMessages(checkEmailAddress, password, mContext);
+
+        if(newMessageCount > oldMessageCount){
+            return true;
+        }else {
+            return false;
+        }
     }
 }
