@@ -471,6 +471,20 @@ public class Home extends AppCompatActivity
 
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                    /*Messaging Thread Display Helpers*/
     public void addNewThread(String name)
     {

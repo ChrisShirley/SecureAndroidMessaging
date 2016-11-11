@@ -11,7 +11,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-
+import android.content.ContentValues;
 import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
 import com.android.secure.messaging.messaging.MThreadHandler;
@@ -20,6 +20,7 @@ import com.android.secure.messaging.messaging.MThreadHandler;
  * @author Chris J. Shirley
  *
  */
+
 public class DAO {
 
     // Database fields
@@ -27,7 +28,7 @@ public class DAO {
     private DatabaseHelper dbHelper;
     private static Context context;
     //private String[] allColumns = { DatabaseHelper.ID,DatabaseHelper.MOB };
-
+    public DAO(){};
     public DAO(Context c,String databaseName,int databaseVersion,String databaseSetupString) {
         dbHelper = new DatabaseHelper(c,databaseName,databaseVersion);
         context = c;
@@ -153,6 +154,20 @@ public class DAO {
         return databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(MThreadHandler.NAME));
     }
 
+    public void updateContactDatabase(String newCon, String oldCon)
+    {
+        if(database==null)
+           open();
+        ContentValues values = new ContentValues();
+        values.put(ContactHandler.NAME, newCon);
 
+        database.update(ContactHandler.TABLE_CONTACTS, values, ContactHandler.NAME + " = ?", new String[] {oldCon});
+
+            close();
+
+
+
+
+    }
 
 }
