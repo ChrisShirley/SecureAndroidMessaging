@@ -109,10 +109,11 @@ public class ContactsActivity extends AppCompatActivity{
     public void updateContactDialog(String oldNameContact)
     {
         AlertDialog.Builder updateBuilder = new AlertDialog.Builder(this);
-        updateBuilder.setTitle("Update Contact");
+        updateBuilder.setTitle("Edit Contact");
 
         // Set an EditText view to get user input
         inputUpdate = new EditText(this);
+        inputUpdate.setText(nameToBeUpdated.toString());
         updateBuilder.setView(inputUpdate);
 
         updateBuilder.setMessage("Please update the common name of the contact").setPositiveButton("Finished", updateClickListener);
