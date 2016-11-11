@@ -164,10 +164,17 @@ public class DAO {
         database.update(ContactHandler.TABLE_CONTACTS, values, ContactHandler.NAME + " = ?", new String[] {oldCon});
 
             close();
-
-
-
-
     }
 
+    public void deleteContactDatabase(String deleteName)
+    {
+        if(database==null)
+            open();
+        ContentValues values = new ContentValues();
+        values.put(ContactHandler.NAME, deleteName);
+
+        database.delete(ContactHandler.TABLE_CONTACTS, ContactHandler.NAME + " = ?", new String[] {deleteName});
+
+        close();
+    }
 }

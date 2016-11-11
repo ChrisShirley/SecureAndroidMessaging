@@ -54,12 +54,15 @@ public class ContactHandler {
 
    public void updateContact(String newName, String oldName)
     {
-     //   Log.i("item", newName);
-     //   Log.i("item", oldName);
         dao.updateContactDatabase(newName, oldName);
 
     }
 
+    public void deleteContact(String deleteName)
+    {
+        dao.deleteContactDatabase(deleteName);
+
+    }
 
 }
 

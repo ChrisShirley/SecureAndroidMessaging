@@ -115,9 +115,9 @@ public class ContactsActivity extends AppCompatActivity{
         inputUpdate = new EditText(this);
         updateBuilder.setView(inputUpdate);
 
-        updateBuilder.setMessage("Please update the common name of the contact").setPositiveButton("Finished", updateClickListener)
-
-                .setNegativeButton("Cancel", updateClickListener);
+        updateBuilder.setMessage("Please update the common name of the contact").setPositiveButton("Finished", updateClickListener);
+        updateBuilder.setNeutralButton("Delete Contact", updateClickListener);
+        updateBuilder.setNegativeButton("Cancel", updateClickListener);
 
         final AlertDialog contactDialog = updateBuilder.create();
         contactDialog.show();
@@ -138,7 +138,15 @@ public class ContactsActivity extends AppCompatActivity{
                 }
             }
         });
-
+        contactDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContactHandler testupdate = new ContactHandler(getApplicationContext());
+                testupdate.deleteContact(nameToBeUpdated);
+                contactDialog.dismiss();
+                addContacts();
+            }
+        });
         contactDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
