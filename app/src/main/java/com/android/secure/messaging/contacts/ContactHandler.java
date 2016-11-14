@@ -3,7 +3,7 @@ package com.android.secure.messaging.contacts;
 import android.content.Context;
 
 import com.android.secure.messaging.database.DAO;
-
+import android.util.Log;
 import java.util.List;
 
 /**
@@ -52,6 +52,17 @@ public class ContactHandler {
         return contacts;
     }
 
+   public void updateContact(String newName, String oldName)
+    {
+        dao.updateContactDatabase(newName, oldName);
+
+    }
+
+    public void deleteContact(String deleteName)
+    {
+        dao.deleteContactDatabase(deleteName);
+
+    }
 
 }
 
