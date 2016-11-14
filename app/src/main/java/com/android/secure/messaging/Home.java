@@ -34,6 +34,7 @@ import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
 import com.android.secure.messaging.contacts.ContactsActivity;
 import com.android.secure.messaging.email.EmailHandler;
+import com.android.secure.messaging.email.EmailListener;
 import com.android.secure.messaging.keys.Encrypt;
 import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.messaging.MessagingActivity;
@@ -145,6 +146,7 @@ public class Home extends AppCompatActivity
                 System.out.println("Message Timestamp : " + e.getTimestamp());
             }
         }*/
+
     }
 
 

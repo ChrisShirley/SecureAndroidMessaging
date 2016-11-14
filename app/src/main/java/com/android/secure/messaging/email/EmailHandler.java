@@ -44,7 +44,6 @@ public class EmailHandler {
     RandomStringGenerator rsg = new RandomStringGenerator();
     EmailGenerator emailGenerator = new EmailGenerator();
     Preferences preferences = new PreferencesHandler();
-    EmailCount emailCount = new EmailCount();
     Context mContext;
 
     public EmailHandler(Context context)
@@ -86,14 +85,25 @@ public class EmailHandler {
         return preferences.getPreference(mContext, preferences.getEmailPrefName());
     }
 
-    public boolean newMessages(String checkEmailAddress, String password){
-        int oldMessageCount = Integer.parseInt(preferences.getPreference(mContext, preferences.getEmailCountPrefName()));
-        int newMessageCount = emailCount.countMessages(checkEmailAddress, password, mContext);
+    public void newMessages(String checkEmailAddress, String password){
 
-        if(newMessageCount > oldMessageCount){
-            return true;
-        }else {
-            return false;
-        }
+        EmailListener el = new EmailListener(mContext);
+        el.execute(preferences.getPreference(mContext, preferences.getEmailPrefName()),
+                preferences.getPreference(mContext, preferences.getPasswordPrefName()));
+
+//        if(preferences.getPreference(mContext, preferences.getEmailCountPrefName()) == null) {
+//
+//            preferences.setPreference(mContext, preferences.getEmailCountPrefName(), 0);
+//
+//        }
+//
+//        int oldMessageCount = Integer.parseInt(preferences.getPreference(mContext, preferences.getEmailCountPrefName()));
+//        int newMessageCount = emailCount.countMessages(checkEmailAddress, password, mContext);
+//
+//        if(newMessageCount > oldMessageCount){
+//            return true;
+//        }else {
+//            return false;
+//        }
     }
 }

@@ -49,8 +49,8 @@ public class ReceiveEmail extends AsyncTask<String, Void, Void> {
             String message = null;
             String timestamp = msg.getSentDate().toString();
             String subject = msg.getSubject().toString();
-            from = subject.substring(subject.indexOf("[") + 1, subject.indexOf("]"));
-            to = subject.substring(subject.indexOf("(") + 1, subject.indexOf(")"));
+            from = subject.substring(subject.indexOf("["), subject.indexOf("]"));
+            to = subject.substring(subject.indexOf("("), subject.indexOf(")"));
 
             if (from.contains(fromEmail) | to.contains(fromEmail)) {
 

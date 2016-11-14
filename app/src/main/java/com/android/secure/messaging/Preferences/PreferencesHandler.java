@@ -12,6 +12,7 @@ public class PreferencesHandler implements Preferences {
     private static final String emailPrefName = "SAMEmail";
     private static final String passwordPrefName = "SAMPassword";
     private static final String EMAILCOUNTPREFNAME = "EmailCount";
+    private static final String NEW_EMAIL_PREF_NAME = "NewEmail";
 
     //private final String prefName = "samEmail";
 
@@ -81,6 +82,9 @@ public class PreferencesHandler implements Preferences {
     public String getPasswordPrefName() {
         return passwordPrefName;
     }
+
+    @Override
+    public String getNewEmailPrefName() { return NEW_EMAIL_PREF_NAME; }
 
     @Override
     public void resetPreferences(Context context){
