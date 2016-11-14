@@ -19,6 +19,7 @@ public class ContactHandler {
     public static final String PKEY = "pkey";
 
 
+
     public static final String DATABASE_NAME = "contacts.db";
     public static final int DATABASE_VERSION = 1;
 
