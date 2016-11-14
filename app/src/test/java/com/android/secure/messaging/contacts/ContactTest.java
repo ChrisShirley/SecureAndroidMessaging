@@ -2,8 +2,6 @@ package com.android.secure.messaging.contacts;
 
 import android.os.Bundle;
 
-
-
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -40,7 +38,6 @@ public class ContactTest {
 
         TestCase.assertTrue(contact.getKey().equals("test3"));
     }
-
 
 }
 
