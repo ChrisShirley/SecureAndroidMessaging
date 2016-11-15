@@ -1,6 +1,7 @@
 package com.android.secure.messaging.email;
 
 import android.content.Context;
+import android.os.Build;
 
 import com.android.secure.messaging.Preferences.Preferences;
 import com.android.secure.messaging.Preferences.PreferencesHandler;
@@ -45,6 +46,8 @@ public class EmailHandler {
     EmailGenerator emailGenerator = new EmailGenerator();
     Preferences preferences = new PreferencesHandler();
     Context mContext;
+    EmailListener el;
+    private static boolean listenerAlive = false;
 
     public EmailHandler(Context context)
     {
@@ -85,11 +88,13 @@ public class EmailHandler {
         return preferences.getPreference(mContext, preferences.getEmailPrefName());
     }
 
-    public void newMessages(String checkEmailAddress, String password){
+    public void newMessages(){
 
-        EmailListener el = new EmailListener(mContext);
+        el = new EmailListener(mContext);
+        listenerAlive = true;
         el.execute(preferences.getPreference(mContext, preferences.getEmailPrefName()),
                 preferences.getPreference(mContext, preferences.getPasswordPrefName()));
+
 
 //        if(preferences.getPreference(mContext, preferences.getEmailCountPrefName()) == null) {
 //
@@ -105,5 +110,20 @@ public class EmailHandler {
 //        }else {
 //            return false;
 //        }
+    }
+
+    public static void setListenerAlive(boolean alive)
+    {
+        listenerAlive = alive;
+    }
+
+    public static boolean getListenerLifeStatus()
+    {
+        return listenerAlive;
+    }
+
+    public void stopListenerTask()
+    {
+        el.cancel(true);
     }
 }

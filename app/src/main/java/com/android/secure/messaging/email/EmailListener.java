@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.mail.Folder;
+import javax.mail.FolderClosedException;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -46,18 +47,18 @@ public class EmailListener extends AsyncTask<String, Void, Void> {
 
         Session session = Session.getInstance(properties);
 
-        IMAPStore store = null;
-        Folder inbox = null;
+
+
 
         try {
-            store = (IMAPStore) session.getStore("imaps");
+            final IMAPStore store  = (IMAPStore) session.getStore("imaps");
             store.connect(checkEmailAddress, password);
 
             if (!store.hasCapability("IDLE")) {
                 throw new RuntimeException("IDLE not supported");
             }
 
-            inbox = (IMAPFolder) store.getFolder("INBOX");
+            final Folder inbox = (IMAPFolder) store.getFolder("INBOX");
             inbox.addMessageCountListener(new MessageCountAdapter() {
 
                 @Override
@@ -68,6 +69,8 @@ public class EmailListener extends AsyncTask<String, Void, Void> {
                         try {
                             System.out.println("Mail Subject:- " + message.getSubject());
                             preferences.setPreference(mContext, preferences.getNewEmailPrefName(), "true");
+                            inbox.close(true);
+                            store.close();
                         } catch (MessagingException e) {
                             e.printStackTrace();
                         }
@@ -75,13 +78,14 @@ public class EmailListener extends AsyncTask<String, Void, Void> {
                 }
             });
 
-
+            inbox.open(Folder.READ_ONLY);
+            ((IMAPFolder) inbox).idle();
+            EmailHandler.setListenerAlive(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        inbox.open(Folder.READ_ONLY);
-        ((IMAPFolder) inbox).idle();
+
 
 
     }
@@ -90,9 +94,12 @@ public class EmailListener extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         try {
             listen(params[0], params[1]);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        catch (Exception e) {
+            e.printStackTrace();
+            EmailHandler.setListenerAlive(false);
+        }
+
         return null;
     }
 

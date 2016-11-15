@@ -19,6 +19,9 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.mail.MessagingException;
 
@@ -28,7 +31,9 @@ public class MessagingActivity extends AppCompatActivity {
     private EmailHandler emailHandler;
     private TextView textView;
     private ProgressDialog dialog;
-    private List<String> messages;
+    private List<String> messages = new ArrayList<>();
+    private List<String> newMessages = new ArrayList<>();
+    private static boolean downloading = false;
 
     private final Preferences preferencesHandler = new PreferencesHandler();
     private final String CONTACT_EXTRA_NAME = "Contact";
@@ -53,12 +58,37 @@ public class MessagingActivity extends AppCompatActivity {
 
 
         textView = (TextView) findViewById(R.id.messaging_text_view);
-        DownloadMessages downloadMessages = new DownloadMessages();
-        downloadMessages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        Download(true);
+        preferencesHandler.setPreference(this, preferencesHandler.getNewEmailPrefName(), "false");
+        ScheduledExecutorService scheduler =
+                Executors.newSingleThreadScheduledExecutor();
+
+        scheduler.scheduleAtFixedRate
+                (new Runnable() {
+                    public void run() {
+                       if(preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getNewEmailPrefName()).contains("true")) {
+
+                           preferencesHandler.setPreference(getApplicationContext(), preferencesHandler.getNewEmailPrefName(), "false");
+                           emailHandler.stopListenerTask();
+                           emailHandler = null;
+                           emailHandler = new EmailHandler(getApplicationContext());
+                           Download(false);
+                       }
+                        else if(!EmailHandler.getListenerLifeStatus())
+                           emailHandler.newMessages();
+                    }
+                }, 0, 5, TimeUnit.SECONDS);
 
 
+    }
 
-
+    private void Download(boolean load)
+    {
+        if(!downloading) {
+            DownloadMessages downloadMessages = new DownloadMessages(load);
+            downloadMessages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
     }
 
     private void createLoader()
@@ -72,10 +102,14 @@ public class MessagingActivity extends AppCompatActivity {
     private void updateView()
     {
         String newText = "";
-        for(String message : messages)
+        for(String message : newMessages)
             newText += message +"\n";
 
-        MessagingActivity.this.textView.setText(textView.getText() + newText);
+
+
+        MessagingActivity.this.textView.append(newText);
+        newMessages.clear();
+
 
     }
 
@@ -97,18 +131,18 @@ public class MessagingActivity extends AppCompatActivity {
 
     private void getMessages()
     {
-        List<String> allMessages = new ArrayList<>();
+
         List<Email> emails = getEmailsFromServer();
         if(emails!=null)
-            for(Email email : emails) {
+            for(int i = messages.size(); i< emails.size();i++) {
 
-                if(email.getFrom().equals(contact.getEmail()))
-                     allMessages.add(email.getTimestamp()+" "+contact.getName() + ": " + email.getMessage());
+                if(emails.get(i).getFrom().contains(contact.getEmail()))
+                     newMessages.add(emails.get(i).getTimestamp()+" "+contact.getName() + ": " + emails.get(i).getMessage());
                 else
-                    allMessages.add(email.getTimestamp()+" you: " + email.getMessage());
+                    newMessages.add(emails.get(i).getTimestamp()+" you: " + emails.get(i).getMessage());
             }
 
-        messages = allMessages;
+        messages.addAll(newMessages);
 
     }
 
@@ -128,9 +162,18 @@ public class MessagingActivity extends AppCompatActivity {
     }
 
     private class DownloadMessages extends AsyncTask<String, Void, String> {
+
+        boolean loadScreen = false;
+
+        public DownloadMessages(boolean load)
+        {
+            loadScreen = load;
+        }
+
        @Override
        protected void onPreExecute(){
-           createLoader();
+           if(loadScreen)
+               createLoader();
        }
 
         @Override
@@ -145,10 +188,11 @@ public class MessagingActivity extends AppCompatActivity {
 
     @Override
     protected void onPostExecute(String result) {
-        clearLoader();
+        downloading=false;
+        if(loadScreen)
+            clearLoader();
         updateView();
-        emailHandler.newMessages(preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getEmailPrefName())
-                ,preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getPasswordPrefName()));
+        emailHandler.newMessages();
     }
 }
 
