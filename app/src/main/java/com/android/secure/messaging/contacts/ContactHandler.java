@@ -19,7 +19,6 @@ public class ContactHandler {
     public static final String PKEY = "pkey";
 
 
-
     public static final String DATABASE_NAME = "contacts.db";
     public static final int DATABASE_VERSION = 1;
 
@@ -27,7 +26,7 @@ public class ContactHandler {
             + TABLE_CONTACTS + "(" +
             NAME + " text not null, "+
             EMAIL +" text not null, "+
-            PKEY +" text PRIMARY KEY);";
+            PKEY +" text PRIMARY KEY not null);";
 
     public ContactHandler(Context context)
     {
