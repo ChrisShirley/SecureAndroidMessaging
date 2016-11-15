@@ -13,9 +13,14 @@ import com.android.secure.messaging.R;
 import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.email.Email;
 import com.android.secure.messaging.email.EmailHandler;
+import com.android.secure.messaging.email.EmailListener;
 import com.google.gson.Gson;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.mail.MessagingException;
 
 public class MessagingActivity extends AppCompatActivity {
 
@@ -24,6 +29,7 @@ public class MessagingActivity extends AppCompatActivity {
     private TextView textView;
     private ProgressDialog dialog;
     private List<String> messages;
+
     private final Preferences preferencesHandler = new PreferencesHandler();
     private final String CONTACT_EXTRA_NAME = "Contact";
 
@@ -141,6 +147,8 @@ public class MessagingActivity extends AppCompatActivity {
     protected void onPostExecute(String result) {
         clearLoader();
         updateView();
+        emailHandler.newMessages(preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getEmailPrefName())
+                ,preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getPasswordPrefName()));
     }
 }
 
