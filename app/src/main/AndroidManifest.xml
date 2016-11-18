@@ -71,12 +71,10 @@
         <activity
             android:name=".messaging.MessagingActivity"
             android:label="@string/title_activity_messaging"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan"
+            />
 
-        <service
-            android:name=".messaging.MessagingService"
-            android:enabled="true"
-            android:exported="true"></service>
     </application>
 
 </manifest>

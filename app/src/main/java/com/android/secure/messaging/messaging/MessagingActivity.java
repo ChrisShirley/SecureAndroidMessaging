@@ -3,8 +3,10 @@ package com.android.secure.messaging.messaging;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import com.android.secure.messaging.Preferences.Preferences;
@@ -30,6 +32,7 @@ public class MessagingActivity extends AppCompatActivity {
     private Contact contact;
     private EmailHandler emailHandler;
     private TextView textView;
+    private NestedScrollView nestedScrollView;
     private ProgressDialog dialog;
     private List<String> messages = new ArrayList<>();
     private List<String> newMessages = new ArrayList<>();
@@ -58,6 +61,7 @@ public class MessagingActivity extends AppCompatActivity {
 
 
         textView = (TextView) findViewById(R.id.messaging_text_view);
+        nestedScrollView = (NestedScrollView) findViewById(R.id.messaging_scroll_view);
 
         Download(true);
         preferencesHandler.setPreference(this, preferencesHandler.getNewEmailPrefName(), "false");
@@ -107,7 +111,15 @@ public class MessagingActivity extends AppCompatActivity {
 
 
 
-        MessagingActivity.this.textView.append(newText);
+        this.textView.append(newText);
+
+        nestedScrollView.post(new Runnable() {
+        @Override
+        public void run() {
+            nestedScrollView.fullScroll(NestedScrollView.FOCUS_DOWN);
+        }
+        });
+
         newMessages.clear();
 
 
