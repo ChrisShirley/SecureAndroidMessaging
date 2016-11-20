@@ -36,7 +36,7 @@ public class EmailListener extends AsyncTask<String, Void, Void> {
         mContext = context;
     }
 
-    public void listen(final String checkEmailAddress, String password) throws MessagingException, IOException {
+    private void connect(final String checkEmailAddress, final String password) throws FolderClosedException{
 
         Properties properties = System.getProperties();
         properties.put("mail.store.protocol", "imaps");
@@ -46,9 +46,6 @@ public class EmailListener extends AsyncTask<String, Void, Void> {
 
 
         Session session = Session.getInstance(properties);
-
-
-
 
         try {
             final IMAPStore store  = (IMAPStore) session.getStore("imaps");
@@ -81,13 +78,18 @@ public class EmailListener extends AsyncTask<String, Void, Void> {
             inbox.open(Folder.READ_ONLY);
             ((IMAPFolder) inbox).idle();
             EmailHandler.setListenerAlive(true);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (FolderClosedException e) {
+            System.out.println("In folder closed exception");
+            connect(checkEmailAddress, password);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
+    }
 
+    public void listen(final String checkEmailAddress, String password) throws MessagingException, IOException {
 
-
+        connect(checkEmailAddress, password);
     }
 
     @Override

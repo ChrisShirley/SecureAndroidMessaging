@@ -60,17 +60,14 @@ public class BiometricActivity extends AppCompatActivity {
         biometricCipher = new BiometricCipher(biometricKeyGenerator.getKeyStore(), biometricKeyGenerator.getBiometricKey());
 
         //Just needed for testing, can be deleted later
-        /*
-        System.out.println("This is the email: " + preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()));
-        preferencesHandler.resetPreferences(context);
+
         System.out.println("This is the email: " + preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()));
         System.out.println("This is the password: " + preferencesHandler.getPreference(context, preferencesHandler.getPasswordPrefName()));
-         */
 
-//        EmailListener el = new EmailListener(context);
-//
-//        el.execute(preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()),
-//                preferencesHandler.getPreference(context, preferencesHandler.getPasswordPrefName()));
+        EmailListener el = new EmailListener(context);
+
+        el.execute(preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()),
+                preferencesHandler.getPreference(context, preferencesHandler.getPasswordPrefName()));
 
 
 

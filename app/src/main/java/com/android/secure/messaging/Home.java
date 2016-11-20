@@ -116,12 +116,12 @@ public class Home extends AppCompatActivity
             addThreads();
 
         //contactHandler.saveContact("Test Account", "testaccount@secureandroidmessaging.com", "1234451243");
-        contactHandler.saveContact("Ryan" , "lkAsZTaJuDBf@secureandroidmessaging.com", "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArjE0bq9UkqU+H6wS24+UgzyC/cxwRkcd" +
-                "kfd/LSHbQRhqqkJrwk/XKz5K2GeuTT9veHsc13LisOR0yKcrY9XFZcPZtiGVDRpybL13zjF++WhD" +
-                "cy8AXwUcYc/69JnXeQcHnllNyQ5Bl+sokBiqRUcmdJpwn3rZKwrDl/tG7LbOa4GpnY+jFTAaY9It" +
-                "VOmKaYZub9IdQs+iALekxbSEaBFYrSVChBIYDH7eIenNy3fx070zBfgLTwxZK2HZi0fpsAqXvh6T" +
-                "khQgk3Se7qTnVQXj4NOJBsh5dJrkjMcrMEePdE7Yhpkf/0pxW0bWnxEGkOveuYVzCoo5yjNCyCBC" +
-                "Op0ThwIDAQAB");
+//        contactHandler.saveContact("Ryan" , "lkAsZTaJuDBf@secureandroidmessaging.com", "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArjE0bq9UkqU+H6wS24+UgzyC/cxwRkcd" +
+//                "kfd/LSHbQRhqqkJrwk/XKz5K2GeuTT9veHsc13LisOR0yKcrY9XFZcPZtiGVDRpybL13zjF++WhD" +
+//                "cy8AXwUcYc/69JnXeQcHnllNyQ5Bl+sokBiqRUcmdJpwn3rZKwrDl/tG7LbOa4GpnY+jFTAaY9It" +
+//                "VOmKaYZub9IdQs+iALekxbSEaBFYrSVChBIYDH7eIenNy3fx070zBfgLTwxZK2HZi0fpsAqXvh6T" +
+//                "khQgk3Se7qTnVQXj4NOJBsh5dJrkjMcrMEePdE7Yhpkf/0pxW0bWnxEGkOveuYVzCoo5yjNCyCBC" +
+//                "Op0ThwIDAQAB");
 
         /*emailHandler = new EmailHandler(context);
        /* ArrayList<Email> emailArrayList = null;
