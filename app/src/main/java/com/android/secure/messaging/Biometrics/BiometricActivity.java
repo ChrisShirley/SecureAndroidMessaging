@@ -38,7 +38,7 @@ public class BiometricActivity extends AppCompatActivity {
     //RandomStringGenerator rsg = new RandomStringGenerator();
     Preferences preferencesHandler = new PreferencesHandler();
     //SendEmail ecs = new SendEmail();
-    EmailHandler emailHandler;
+    private static EmailHandler emailHandler;
 
 
     @Override
@@ -165,7 +165,7 @@ public class BiometricActivity extends AppCompatActivity {
             }
         };
 
-    public void startHome() {
+    public static void startHome() {
         emailHandler = new EmailHandler(context);
         //Check to see if the application has already assigned an email address
         if(emailHandler.getUniqueEmail() == null){

@@ -13,7 +13,7 @@ import android.widget.Toast;
 /**
  * Created by silanr on 9/19/2016.
  */
-public class BiometricHandler extends Activity {
+public class BiometricHandler {
 
 
     private FingerprintManager mFingerprintManager;
