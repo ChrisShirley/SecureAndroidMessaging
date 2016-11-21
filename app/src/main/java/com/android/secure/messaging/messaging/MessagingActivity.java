@@ -3,12 +3,16 @@ package com.android.secure.messaging.messaging;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.android.secure.messaging.Preferences.Preferences;
 import com.android.secure.messaging.Preferences.PreferencesHandler;
 import com.android.secure.messaging.R;
@@ -16,9 +20,12 @@ import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.email.Email;
 import com.android.secure.messaging.email.EmailHandler;
 import com.android.secure.messaging.email.EmailListener;
+import com.android.secure.messaging.keys.Encrypt;
+import com.android.secure.messaging.keys.Keys;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -62,6 +69,13 @@ public class MessagingActivity extends AppCompatActivity {
 
         textView = (TextView) findViewById(R.id.messaging_text_view);
         nestedScrollView = (NestedScrollView) findViewById(R.id.messaging_scroll_view);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_send);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               sendMessage();
+            }
+        });
 
         Download(true);
         preferencesHandler.setPreference(this, preferencesHandler.getNewEmailPrefName(), "false");
@@ -86,6 +100,51 @@ public class MessagingActivity extends AppCompatActivity {
 
 
     }
+
+    private void sendMessage()
+    {
+        String message = null;
+        Encrypt sendMessage = null;
+        sendMessage = new Encrypt(Keys.getInstance().getPublicKey());
+        EditText input = (EditText) findViewById(R.id.messaging_edit_text);
+        if(input.getText().length()==0) {
+           // Toast.makeText(getApplicationContext(), "Contact must have a name in order to be saved. Please name your contact or cancel.", Toast.LENGTH_LONG).show();
+        }
+        else {
+            //Toast.makeText(getApplicationContext(), "Name: " + input.getText() + " Key: " + new String(msg.getRecords()[0].getPayload()), Toast.LENGTH_LONG).show();
+            message = input.getText().toString();
+            byte[] encryptedMsgForSelf = sendMessage.encrypt(message.getBytes());
+            String messageForSelf = null;
+            try {
+                messageForSelf = new String(encryptedMsgForSelf, "ISO-8859-1");
+                System.out.println("Encrypted using ISO standard: " + messageForSelf);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            Encrypt encryptForContact = null;
+            try {
+                encryptForContact = new Encrypt(Keys.getInstance().convertStringToPublicKey(contact.getKey()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            byte[] encryptedMsg = encryptForContact.encrypt(message.getBytes());
+            String messageForContact = null;
+            try {
+                messageForContact = new String(encryptedMsg, "ISO-8859-1");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            emailHandler.send(contact.getEmail(), preferencesHandler.getPreference(getApplicationContext(),
+                    preferencesHandler.getEmailPrefName()), preferencesHandler.getPreference(getApplicationContext(),
+                    preferencesHandler.getPasswordPrefName()), messageForContact, messageForSelf);
+
+        }
+        input.setText("");
+    }
+
+
 
     private void Download(boolean load)
     {
