@@ -66,8 +66,7 @@ public class EmailListener extends AsyncTask<String, Void, Void> {
                         try {
                             System.out.println("Mail Subject:- " + message.getSubject());
                             preferences.setPreference(mContext, preferences.getNewEmailPrefName(), "true");
-                            inbox.close(true);
-                            store.close();
+
                         } catch (MessagingException e) {
                             e.printStackTrace();
                         }
@@ -77,7 +76,7 @@ public class EmailListener extends AsyncTask<String, Void, Void> {
 
             inbox.open(Folder.READ_ONLY);
             ((IMAPFolder) inbox).idle();
-            EmailHandler.setListenerAlive(true);
+
         } catch (FolderClosedException e) {
             System.out.println("In folder closed exception");
             connect(checkEmailAddress, password);
@@ -99,7 +98,7 @@ public class EmailListener extends AsyncTask<String, Void, Void> {
         }
         catch (Exception e) {
             e.printStackTrace();
-            EmailHandler.setListenerAlive(false);
+
         }
 
         return null;

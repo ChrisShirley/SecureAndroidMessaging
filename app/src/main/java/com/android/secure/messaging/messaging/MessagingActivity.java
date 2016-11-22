@@ -63,8 +63,8 @@ public class MessagingActivity extends AppCompatActivity {
         toolbar.setTitle(contact.getName());
         setSupportActionBar(toolbar);
 
-        emailHandler = new EmailHandler(this);
-
+        //emailHandler = new EmailHandler(this);
+        emailHandler = EmailHandler.getInstance(this);
 
 
         textView = (TextView) findViewById(R.id.messaging_text_view);
@@ -79,24 +79,23 @@ public class MessagingActivity extends AppCompatActivity {
 
         Download(true);
         preferencesHandler.setPreference(this, preferencesHandler.getNewEmailPrefName(), "false");
-        ScheduledExecutorService scheduler =
+        /**/ScheduledExecutorService scheduler =
                 Executors.newSingleThreadScheduledExecutor();
 
         scheduler.scheduleAtFixedRate
                 (new Runnable() {
                     public void run() {
+                        emailHandler.checkForMessages(preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getEmailPrefName())
+                                ,preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getPasswordPrefName()),messages.size());
                        if(preferencesHandler.getPreference(getApplicationContext(),preferencesHandler.getNewEmailPrefName()).contains("true")) {
 
                            preferencesHandler.setPreference(getApplicationContext(), preferencesHandler.getNewEmailPrefName(), "false");
-                           emailHandler.stopListenerTask();
-                           emailHandler = null;
-                           emailHandler = new EmailHandler(getApplicationContext());
+
                            Download(false);
                        }
-                        else if(!EmailHandler.getListenerLifeStatus())
-                           emailHandler.newMessages();
+
                     }
-                }, 0, 5, TimeUnit.SECONDS);
+                }, 0, 10, TimeUnit.SECONDS);
 
 
     }
@@ -149,6 +148,7 @@ public class MessagingActivity extends AppCompatActivity {
     private void Download(boolean load)
     {
         if(!downloading) {
+            downloading = true;
             DownloadMessages downloadMessages = new DownloadMessages(load);
             downloadMessages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
@@ -263,7 +263,7 @@ public class MessagingActivity extends AppCompatActivity {
         if(loadScreen)
             clearLoader();
         updateView();
-        emailHandler.newMessages();
+        //emailHandler.newMessages();
     }
 }
 

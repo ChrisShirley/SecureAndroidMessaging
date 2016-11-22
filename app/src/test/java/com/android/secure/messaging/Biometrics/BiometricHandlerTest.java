@@ -24,14 +24,15 @@ import org.robolectric.annotation.Config;
 @Config(constants = BuildConfig.class)
 public class BiometricHandlerTest {
 
-    private BiometricActivity biometricActivity;
+    private Activity biometricActivity;
     private BiometricHandler biometricHandler;
 
     @Before
     public void setUp() throws Exception {
 
         biometricActivity = Robolectric.setupActivity(BiometricActivity.class);
-        //biometricHandler = new BiometricHandler();
+        //boolean available = biometricActivity.checkBiometricStatus();
+        //biometricHandler = biometricActivity.fingerprintHandler.biometricHandler;
     }
 
     @Test

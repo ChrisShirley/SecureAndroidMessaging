@@ -51,7 +51,7 @@ public class BiometricActivity extends AppCompatActivity {
         context = this;
         fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
         fingerprintHandler = new FingerprintHandler(this);
-        emailHandler = new EmailHandler(context);
+        emailHandler = EmailHandler.getInstance(context);
 
         if(!checkBiometricStatus())
             return;
@@ -64,10 +64,10 @@ public class BiometricActivity extends AppCompatActivity {
         System.out.println("This is the email: " + preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()));
         System.out.println("This is the password: " + preferencesHandler.getPreference(context, preferencesHandler.getPasswordPrefName()));
 
-        EmailListener el = new EmailListener(context);
+        //EmailListener el = new EmailListener(context);
 
-        el.execute(preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()),
-                preferencesHandler.getPreference(context, preferencesHandler.getPasswordPrefName()));
+        //el.execute(preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()),
+                //preferencesHandler.getPreference(context, preferencesHandler.getPasswordPrefName()));
 
 
 
@@ -89,7 +89,7 @@ public class BiometricActivity extends AppCompatActivity {
 
     }
 
-    private boolean checkBiometricStatus()
+    protected boolean checkBiometricStatus()
     {
         ContextCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT);
         if(!fingerprintHandler.hasScanner(fingerprintManager)) {
@@ -166,7 +166,7 @@ public class BiometricActivity extends AppCompatActivity {
         };
 
     public static void startHome() {
-        emailHandler = new EmailHandler(context);
+        emailHandler =  EmailHandler.getInstance(context);
         //Check to see if the application has already assigned an email address
         if(emailHandler.getUniqueEmail() == null){
             //If null is returned, create email address.

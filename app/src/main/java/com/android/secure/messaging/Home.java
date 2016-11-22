@@ -329,7 +329,7 @@ public class Home extends AppCompatActivity
         messageDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EmailHandler emailHandler = new EmailHandler(getApplicationContext());
+                EmailHandler emailHandler =  EmailHandler.getInstance(getApplicationContext());
                 Contact messagingContact = null;
                 String message = messageBox.getText().toString();
 

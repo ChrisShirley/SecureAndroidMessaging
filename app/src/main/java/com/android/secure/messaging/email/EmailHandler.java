@@ -7,12 +7,23 @@ import com.android.secure.messaging.Preferences.Preferences;
 import com.android.secure.messaging.Preferences.PreferencesHandler;
 import com.android.secure.messaging.RandomStringGenerator.RandomStringGenerator;
 import com.android.secure.messaging.database.DAO;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPStore;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import javax.mail.Folder;
+import javax.mail.FolderClosedException;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.event.MessageCountAdapter;
+import javax.mail.event.MessageCountEvent;
 
 /**
  * Created by christophershirley on 9/18/16.
@@ -40,16 +51,23 @@ public class EmailHandler {
 //            MESSAGE +" text not null);";
 
     final private String DOMAIN = "@secureandroidmessaging.com";
-    SendEmail sendEmail = new SendEmail();
-    ReceiveEmail receiveEmail = new ReceiveEmail();
+    SendEmail sendEmail;
+    private static EmailHandler emailHandler;
+    ReceiveEmail receiveEmail;
     RandomStringGenerator rsg = new RandomStringGenerator();
     EmailGenerator emailGenerator = new EmailGenerator();
-    Preferences preferences = new PreferencesHandler();
+    final Preferences preferences = new PreferencesHandler();
     Context mContext;
-    EmailListener el;
+    private static EmailListener el;
     private static boolean listenerAlive = false;
 
-    public EmailHandler(Context context)
+    public static EmailHandler getInstance(Context context)
+    {
+        if(emailHandler==null)
+            emailHandler = new EmailHandler(context);
+        return emailHandler;
+    }
+    private EmailHandler(Context context)
     {
         mContext = context;
         //dao = new DAO(context,DATABASE_NAME,DATABASE_VERSION,MESSAGES_TABLE_CREATE);
@@ -57,16 +75,19 @@ public class EmailHandler {
 
     public void send(String to, String from, String password, String encryptedMessageForContact, String encryptedMessageForSelf)
     {
+        sendEmail = new SendEmail();
         sendEmail.execute(to, from, password, encryptedMessageForContact, encryptedMessageForSelf);
     }
 
     public ArrayList<Email> readAllEmails (String checkEmailAddress, String password) throws InterruptedException, ExecutionException{
+        receiveEmail = new ReceiveEmail();
         receiveEmail.execute(checkEmailAddress, password);
         receiveEmail.get();
         return receiveEmail.getEmailArray();
     }
 
     public ArrayList<Email> readEmailsFrom(String checkEmailAddress, String password, String fromAddress) throws Exception{
+        receiveEmail = new ReceiveEmail();
         receiveEmail.execute(checkEmailAddress, password, fromAddress);
         receiveEmail.get();
         return receiveEmail.getEmailArray();
@@ -89,11 +110,14 @@ public class EmailHandler {
     }
 
     public void newMessages(){
+        if(listenerAlive==false) {
+            el = new EmailListener(mContext);
+            listenerAlive = true;
+            el.execute(preferences.getPreference(mContext, preferences.getEmailPrefName()),
+                    preferences.getPreference(mContext, preferences.getPasswordPrefName()));
+        }
 
-        el = new EmailListener(mContext);
-        listenerAlive = true;
-        el.execute(preferences.getPreference(mContext, preferences.getEmailPrefName()),
-                preferences.getPreference(mContext, preferences.getPasswordPrefName()));
+
 
 
 //        if(preferences.getPreference(mContext, preferences.getEmailCountPrefName()) == null) {
@@ -110,20 +134,51 @@ public class EmailHandler {
 //        }else {
 //            return false;
 //        }
+    }final private String HOSTADDRESS = "secure.emailsrvr.com";
+    public void checkForMessages(String checkEmailAddress, String password, int count)
+    {
+        boolean m = false;
+
+        Properties properties = System.getProperties();
+        properties.put("mail.store.protocol", "imaps");
+        properties.put("mail.imaps.host", HOSTADDRESS);
+        properties.put("mail.imaps.port", "993");
+        properties.put("mail.imaps.timeout", "600000");
+
+
+        Session session = Session.getInstance(properties);
+
+        try {
+            final IMAPStore store  = (IMAPStore) session.getStore("imaps");
+            store.connect(checkEmailAddress, password);
+
+            if (!store.hasCapability("IDLE")) {
+                throw new RuntimeException("IDLE not supported");
+            }
+
+            final Folder inbox = (IMAPFolder) store.getFolder("INBOX");
+
+
+
+             if(inbox.getMessageCount()>count)
+                preferences.setPreference(mContext, preferences.getNewEmailPrefName(), "true");
+
+
+
+
+
+
+            store.close();
+
+
+        } catch (FolderClosedException e) {
+            System.out.println("In folder closed exception");
+            checkForMessages(checkEmailAddress, password, count);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
     }
 
-    public static void setListenerAlive(boolean alive)
-    {
-        listenerAlive = alive;
-    }
 
-    public static boolean getListenerLifeStatus()
-    {
-        return listenerAlive;
-    }
-
-    public void stopListenerTask()
-    {
-        el.cancel(true);
-    }
 }
