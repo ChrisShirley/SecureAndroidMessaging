@@ -39,6 +39,9 @@ public class BiometricHandler {
         return biometricsAvailable;
     }
 
+    protected FingerprintManager getmFingerprintManager()
+    {return mFingerprintManager;}
+
     public boolean isBiometricsEnabled() {
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(mContext, "Fingerprint permission Error. Please grant permission to use fingerprint scanner", Toast.LENGTH_LONG).show();
