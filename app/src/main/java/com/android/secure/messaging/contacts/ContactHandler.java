@@ -26,7 +26,7 @@ public class ContactHandler {
             + TABLE_CONTACTS + "(" +
             NAME + " text not null, "+
             EMAIL +" text not null, "+
-            PKEY +" text PRIMARY KEY);";
+            PKEY +" text PRIMARY KEY not null);";
 
     public ContactHandler(Context context)
     {

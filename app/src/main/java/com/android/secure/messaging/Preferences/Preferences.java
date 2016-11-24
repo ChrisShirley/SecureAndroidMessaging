@@ -23,4 +23,6 @@ public interface Preferences {
 
     String getEmailCountPrefName();
 
+    String getNewEmailPrefName();
+
 }

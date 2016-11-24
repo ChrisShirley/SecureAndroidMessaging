@@ -11,22 +11,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.android.secure.messaging.Biometrics.BiometricCipher;
-import com.android.secure.messaging.Biometrics.BiometricKeyGenerator;
-import com.android.secure.messaging.Biometrics.FingerprintHandler;
 import com.android.secure.messaging.Home;
 import com.android.secure.messaging.Preferences.Preferences;
 import com.android.secure.messaging.Preferences.PreferencesHandler;
 import com.android.secure.messaging.R;
-import com.android.secure.messaging.email.Email;
-import com.android.secure.messaging.email.SendEmail;
-import com.android.secure.messaging.email.EmailGenerator;
-import com.android.secure.messaging.RandomStringGenerator.RandomStringGenerator;
 import com.android.secure.messaging.email.EmailHandler;
+import com.android.secure.messaging.email.EmailListener;
 
 import android.view.WindowManager;
-
-import java.util.ArrayList;
 
 public class BiometricActivity extends AppCompatActivity {
 
@@ -46,7 +38,7 @@ public class BiometricActivity extends AppCompatActivity {
     //RandomStringGenerator rsg = new RandomStringGenerator();
     Preferences preferencesHandler = new PreferencesHandler();
     //SendEmail ecs = new SendEmail();
-    EmailHandler emailHandler;
+    private static EmailHandler emailHandler;
 
 
     @Override
@@ -59,7 +51,7 @@ public class BiometricActivity extends AppCompatActivity {
         context = this;
         fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
         fingerprintHandler = new FingerprintHandler(this);
-        emailHandler = new EmailHandler(context);
+        emailHandler = EmailHandler.getInstance(context);
 
         if(!checkBiometricStatus())
             return;
@@ -68,12 +60,17 @@ public class BiometricActivity extends AppCompatActivity {
         biometricCipher = new BiometricCipher(biometricKeyGenerator.getKeyStore(), biometricKeyGenerator.getBiometricKey());
 
         //Just needed for testing, can be deleted later
-        /*
-        System.out.println("This is the email: " + preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()));
-        preferencesHandler.resetPreferences(context);
+
         System.out.println("This is the email: " + preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()));
         System.out.println("This is the password: " + preferencesHandler.getPreference(context, preferencesHandler.getPasswordPrefName()));
-         */
+
+        //EmailListener el = new EmailListener(context);
+
+        //el.execute(preferencesHandler.getPreference(context, preferencesHandler.getEmailPrefName()),
+                //preferencesHandler.getPreference(context, preferencesHandler.getPasswordPrefName()));
+
+
+
         if (biometricCipher.initCipher()) {
             cryptoObject = new FingerprintManager.CryptoObject(biometricCipher.getCipher());
             fingerprintHandler.startAuthentication(fingerprintManager, cryptoObject);
@@ -92,7 +89,7 @@ public class BiometricActivity extends AppCompatActivity {
 
     }
 
-    private boolean checkBiometricStatus()
+    protected boolean checkBiometricStatus()
     {
         ContextCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT);
         if(!fingerprintHandler.hasScanner(fingerprintManager)) {
@@ -168,13 +165,15 @@ public class BiometricActivity extends AppCompatActivity {
             }
         };
 
-    public void startHome() {
-        emailHandler = new EmailHandler(context);
+    public static void startHome() {
+        emailHandler =  EmailHandler.getInstance(context);
         //Check to see if the application has already assigned an email address
         if(emailHandler.getUniqueEmail() == null){
             //If null is returned, create email address.
             emailHandler.requestUniqueEmailAddress();
         }
+
+        //emailHandler.requestUniqueEmailAddress();
 
         /*
         emailHandler.send("testaccount@secureandroidmessaging.com", preferencesHandler.getPreference(context,

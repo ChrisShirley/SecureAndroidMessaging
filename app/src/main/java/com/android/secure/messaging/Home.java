@@ -34,6 +34,7 @@ import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
 import com.android.secure.messaging.contacts.ContactsActivity;
 import com.android.secure.messaging.email.EmailHandler;
+import com.android.secure.messaging.email.EmailListener;
 import com.android.secure.messaging.keys.Encrypt;
 import com.android.secure.messaging.keys.Keys;
 import com.android.secure.messaging.messaging.MessagingActivity;
@@ -115,12 +116,12 @@ public class Home extends AppCompatActivity
             addThreads();
 
         //contactHandler.saveContact("Test Account", "testaccount@secureandroidmessaging.com", "1234451243");
-        contactHandler.saveContact("Ryan" , "lkAsZTaJuDBf@secureandroidmessaging.com", "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArjE0bq9UkqU+H6wS24+UgzyC/cxwRkcd" +
-                "kfd/LSHbQRhqqkJrwk/XKz5K2GeuTT9veHsc13LisOR0yKcrY9XFZcPZtiGVDRpybL13zjF++WhD" +
-                "cy8AXwUcYc/69JnXeQcHnllNyQ5Bl+sokBiqRUcmdJpwn3rZKwrDl/tG7LbOa4GpnY+jFTAaY9It" +
-                "VOmKaYZub9IdQs+iALekxbSEaBFYrSVChBIYDH7eIenNy3fx070zBfgLTwxZK2HZi0fpsAqXvh6T" +
-                "khQgk3Se7qTnVQXj4NOJBsh5dJrkjMcrMEePdE7Yhpkf/0pxW0bWnxEGkOveuYVzCoo5yjNCyCBC" +
-                "Op0ThwIDAQAB");
+//        contactHandler.saveContact("Ryan" , "lkAsZTaJuDBf@secureandroidmessaging.com", "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArjE0bq9UkqU+H6wS24+UgzyC/cxwRkcd" +
+//                "kfd/LSHbQRhqqkJrwk/XKz5K2GeuTT9veHsc13LisOR0yKcrY9XFZcPZtiGVDRpybL13zjF++WhD" +
+//                "cy8AXwUcYc/69JnXeQcHnllNyQ5Bl+sokBiqRUcmdJpwn3rZKwrDl/tG7LbOa4GpnY+jFTAaY9It" +
+//                "VOmKaYZub9IdQs+iALekxbSEaBFYrSVChBIYDH7eIenNy3fx070zBfgLTwxZK2HZi0fpsAqXvh6T" +
+//                "khQgk3Se7qTnVQXj4NOJBsh5dJrkjMcrMEePdE7Yhpkf/0pxW0bWnxEGkOveuYVzCoo5yjNCyCBC" +
+//                "Op0ThwIDAQAB");
 
         /*emailHandler = new EmailHandler(context);
        /* ArrayList<Email> emailArrayList = null;
@@ -145,6 +146,7 @@ public class Home extends AppCompatActivity
                 System.out.println("Message Timestamp : " + e.getTimestamp());
             }
         }*/
+
     }
 
 
@@ -273,42 +275,6 @@ public class Home extends AppCompatActivity
 
                                     /* Alert Dialog Methods for notifying the user of errors or to give instructions*/
 // Nick Altered
-    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which){
-                case DialogInterface.BUTTON_POSITIVE:
-                    String message = null;
-                    Encrypt sendMessage;
-                    sendMessage = null;
-
-                   if(input.getText().length()==0) {
-                       Toast.makeText(getApplicationContext(), "Contact must have a name in order to be saved. Please name your contact or cancel.", Toast.LENGTH_LONG).show();
-                   }
-                    else {
-                        Toast.makeText(getApplicationContext(), "Name: " + input.getText() + " Key: " + new String(msg.getRecords()[0].getPayload()), Toast.LENGTH_LONG).show();
-
-                       sendMessage.setPublicKey(keys.getPublicKey());
-
-                       message = input.getText().toString();
-                       byte[] messageBytes = null;
-                       try {
-                           messageBytes = message.getBytes("ISO-8859-1");
-                           sendMessage.encrypt(messageBytes);
-                       }catch( UnsupportedEncodingException e) {
-                           System.out.println("Unsupported character set");
-                       }
-                        break;
-                    }
-                    break;
-
-                case DialogInterface.BUTTON_NEGATIVE:
-                    //No button clicked
-                    break;
-            }
-        }
-    };
-
 
 
     public void createMessageDialog()
@@ -319,11 +285,11 @@ public class Home extends AppCompatActivity
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("New Message");
         dialog.setIcon(R.drawable.ic_mail);
-        dialog.setMessage("\n").setPositiveButton("Send", dialogClickListener)
+        dialog.setMessage("\n").setPositiveButton("Send", null)
 
 
 
-                .setNegativeButton("Cancel", dialogClickListener);
+                .setNegativeButton("Cancel", null);
 
         List<String> contactNames = new ArrayList<>();
         contactNames.add(selectContact);
@@ -363,7 +329,7 @@ public class Home extends AppCompatActivity
         messageDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EmailHandler emailHandler = new EmailHandler(getApplicationContext());
+                EmailHandler emailHandler =  EmailHandler.getInstance(getApplicationContext());
                 Contact messagingContact = null;
                 String message = messageBox.getText().toString();
 
@@ -437,9 +403,9 @@ public class Home extends AppCompatActivity
         input = new EditText(this);
         builder.setView(input);
 
-        builder.setMessage("New Contact Received! Please name your contact.").setPositiveButton("Continue", dialogClickListener)
+        builder.setMessage("New Contact Received! Please name your contact.").setPositiveButton("Continue", null)
 
-                .setNegativeButton("Cancel", dialogClickListener);
+                .setNegativeButton("Cancel", null);
 
         final AlertDialog contactDialog = builder.create();
         contactDialog.show();

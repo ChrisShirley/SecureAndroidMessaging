@@ -15,7 +15,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     CancellationSignal cancellationSignal;
     Context mContext;
     BiometricHandler biometricHandler;
-    BiometricActivity biometricActivity = new BiometricActivity();
+    //BiometricActivity biometricActivity = new BiometricActivity();
 
     public FingerprintHandler(Context context){
         mContext = context;
@@ -54,7 +54,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     @Override
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
         Toast.makeText(mContext, "Successful Authentication!", Toast.LENGTH_LONG).show();
-        biometricActivity.startHome();
+        BiometricActivity.startHome();
         //BiometricActivity.startHome();
     }
 
