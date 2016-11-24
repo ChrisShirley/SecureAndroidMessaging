@@ -5,17 +5,25 @@ package com.android.secure.messaging.database;
  */
 import java.util.ArrayList;
 import java.util.List;
+
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import android.content.ContentValues;
+
+import com.android.secure.messaging.R;
 import com.android.secure.messaging.contacts.Contact;
 import com.android.secure.messaging.contacts.ContactHandler;
+import com.android.secure.messaging.contacts.ContactsActivity;
 import com.android.secure.messaging.messaging.MThreadHandler;
-
+import android.widget.Toast;
+import android.app.Activity;
+import android.app.AlertDialog.Builder;
 /**
  * @author Chris J. Shirley
  *
@@ -154,6 +162,25 @@ public class DAO {
         return databaseCursor.getString(databaseCursor.getColumnIndexOrThrow(MThreadHandler.NAME));
     }
 
+ /*   private void alertView( String message ) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+
+        dialog.setTitle( "Warning" )
+              //  .setIcon(R.drawable.ic_launcher)
+                .setMessage(message)
+//  .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//      public void onClick(DialogInterface dialoginterface, int i) {
+//          dialoginterface.cancel();
+//          }})
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialoginterface, int i) {
+                    }
+                }).show();}     */
+
+
+
+
+
     public void updateContactDatabase(String newCon, String oldCon)
     {
         if(database==null)
@@ -161,9 +188,24 @@ public class DAO {
         ContentValues values = new ContentValues();
         values.put(ContactHandler.NAME, newCon);
 
-        database.update(ContactHandler.TABLE_CONTACTS, values, ContactHandler.NAME + " = ?", new String[] {oldCon});
+        Cursor cursorExist = null;
+
+        cursorExist = database.rawQuery("SELECT  * FROM " + ContactHandler.TABLE_CONTACTS + " where NAME = ?",new String[]{newCon});
+
+        //getActivity()
+
+        if(cursorExist.getCount()  > 0){
+
+           /// Toast.makeText(getApplicationContext(), "The Name is already in use!!!", Toast.LENGTH_LONG).show();
+            close();
+        }
+        else {
+            database.update(ContactHandler.TABLE_CONTACTS, values, ContactHandler.NAME + " = ?", new String[] {oldCon});
+
 
             close();
+
+        }
     }
 
     public void deleteContactDatabase(String deleteName)
