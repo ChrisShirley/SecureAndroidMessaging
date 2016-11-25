@@ -5,36 +5,23 @@ package com.android.secure.messaging.Biometrics;
  */
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.test.mock.MockContext;
-
 import com.android.secure.messaging.BuildConfig;
 import com.android.secure.messaging.CustomRobolectricTestRunner;
-import com.android.secure.messaging.contacts.ContactHandler;
-import com.android.secure.messaging.contacts.ContactsActivity;
-
 import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import static android.content.Context.FINGERPRINT_SERVICE;
 
 @RunWith(CustomRobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class BiometricHandlerTest {
 
-    private Activity biometricActivity;
     private BiometricHandler biometricHandler;
     private FingerprintManager fingerprintManager;
     private Context context;
@@ -51,16 +38,16 @@ public class BiometricHandlerTest {
         biometricHandler = new BiometricHandler(context, fingerprintManager);
     }
 
+    @SuppressWarnings("MissingPermission")
     @Test
     public void bioIsAvailable() throws Exception {
 
-        ContextCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT);
+
         Mockito.when(fingerprintManager.isHardwareDetected()).thenReturn(true);
         TestCase.assertTrue(biometricHandler.isBiometricsAvailable());
         Mockito.when(fingerprintManager.isHardwareDetected()).thenReturn(false);
         TestCase.assertFalse(biometricHandler.isBiometricsAvailable());
-        Mockito.when(ContextCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT)).thenReturn(-1);
-        TestCase.assertFalse(biometricHandler.isBiometricsAvailable());
+
     }
 
     @Test
