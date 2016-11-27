@@ -191,7 +191,7 @@ public class MessagingActivity extends AppCompatActivity {
         }
     }
 
-    private Contact getContact(Bundle contactBundle)
+    protected Contact getContact(Bundle contactBundle)
     {
         String jsonMyObject = null;
         if (contactBundle != null) {

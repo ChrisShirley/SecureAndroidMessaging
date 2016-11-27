@@ -1,6 +1,6 @@
 package com.android.secure.messaging.email;
 
-import com.android.secure.messaging.contacts.Contact;
+
 
 /**
  * Created by christophershirley on 9/18/16.
