@@ -60,6 +60,7 @@ public class EmailHandler {
     Context mContext;
     private static EmailListener el;
     private static boolean listenerAlive = false;
+    private static boolean checkingMessages = false;
 
     public static EmailHandler getInstance(Context context)
     {
@@ -137,7 +138,10 @@ public class EmailHandler {
     }final private String HOSTADDRESS = "secure.emailsrvr.com";
     public void checkForMessages(String checkEmailAddress, String password, int count)
     {
-        boolean m = false;
+        if(checkingMessages)
+            return;
+        else
+            checkingMessages = true;
 
         Properties properties = System.getProperties();
         properties.put("mail.store.protocol", "imaps");
@@ -177,6 +181,7 @@ public class EmailHandler {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        checkingMessages = false;
 
     }
 

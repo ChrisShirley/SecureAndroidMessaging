@@ -95,7 +95,7 @@ public class MessagingActivity extends AppCompatActivity {
                        }
 
                     }
-                }, 0, 10, TimeUnit.SECONDS);
+                }, 0, 1, TimeUnit.SECONDS);
 
 
     }
