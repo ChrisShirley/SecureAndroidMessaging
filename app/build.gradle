@@ -37,7 +37,6 @@ dependencies {
     testCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     // Optional -- UI testing with UI Automator
     testCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
-    testCompile 'org.mockito:mockito-core:2.1.0'
     compile files('libs/activation.jar')
     compile files('libs/additionnal.jar')
     compile files('libs/mail.jar')
