@@ -95,6 +95,7 @@ public class DAO {
         values.put(MThreadHandler.NAME, name);
         long id = database.insert(MThreadHandler.TABLE_THREADS, null,
                 values);
+        close();
         if(id==-1)
             return false;
         else
@@ -108,10 +109,12 @@ public class DAO {
         ContentValues values = new ContentValues();
         values.put(MThreadHandler.NAME, name);
         int id = database.delete(MThreadHandler.TABLE_THREADS, MThreadHandler.NAME+ " = ?", new String[] {name});
+        close();
         if(id==-1)
             return false;
         else
             return true;
+
     }
 
     public List<String> getAllThreads() {
