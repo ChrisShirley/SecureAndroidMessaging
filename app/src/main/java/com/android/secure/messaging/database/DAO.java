@@ -101,6 +101,19 @@ public class DAO {
             return true;
     }
 
+    public boolean deleteThread(String name)
+    {
+        if(database==null)
+            open();
+        ContentValues values = new ContentValues();
+        values.put(MThreadHandler.NAME, name);
+        int id = database.delete(MThreadHandler.TABLE_THREADS, MThreadHandler.NAME+ " = ?", new String[] {name});
+        if(id==-1)
+            return false;
+        else
+            return true;
+    }
+
     public List<String> getAllThreads() {
         if(database==null)
             open();
@@ -178,7 +191,32 @@ public class DAO {
                 }).show();}     */
 
 
+    public void updateThreadsDatabase(String newCon, String oldCon)
+    {
+        if(database==null)
+            open();
+        ContentValues values = new ContentValues();
+        values.put(MThreadHandler.NAME, newCon);
 
+        Cursor cursorExist = null;
+
+        cursorExist = database.rawQuery("SELECT  * FROM " + MThreadHandler.TABLE_THREADS + " where NAME = ?",new String[]{newCon});
+
+        //getActivity()
+
+        if(cursorExist.getCount()  > 0){
+
+            /// Toast.makeText(getApplicationContext(), "The Name is already in use!!!", Toast.LENGTH_LONG).show();
+            close();
+        }
+        else {
+            database.update(MThreadHandler.TABLE_THREADS, values, MThreadHandler.NAME + " = ?", new String[] {oldCon});
+
+
+            close();
+
+        }
+    }
 
 
     public void updateContactDatabase(String newCon, String oldCon)

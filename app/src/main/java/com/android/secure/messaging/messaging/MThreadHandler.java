@@ -54,4 +54,13 @@ public class MThreadHandler {
     public void saveThread(String name){
         dao.saveThread(name);
     }
+
+    public void deleteThread(String name){
+        dao.deleteThread(name);
+    }
+
+    public void updateThreadName(String newName, String oldName)
+    {
+        dao.updateThreadsDatabase(newName,oldName);
+    }
 }

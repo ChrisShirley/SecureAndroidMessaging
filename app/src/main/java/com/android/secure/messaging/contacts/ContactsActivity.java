@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import com.android.secure.messaging.Home;
 import com.android.secure.messaging.R;
 import com.android.secure.messaging.database.DAO;
 import com.android.secure.messaging.keys.Encrypt;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import android.util.Log;
 import com.android.secure.messaging.contacts.ContactHandler;
+import com.android.secure.messaging.messaging.MThreadHandler;
 
 public class ContactsActivity extends AppCompatActivity{
 
@@ -34,6 +37,7 @@ public class ContactsActivity extends AppCompatActivity{
     private String nameToBeUpdated;
     private ContactHandler contactUpdateHandler1;
     private AdapterView adapterView;
+    private MThreadHandler mThreadHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +50,7 @@ public class ContactsActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
 
         addContacts();
-
+        mThreadHandler = new MThreadHandler(this);
 
     }
 
@@ -129,8 +133,9 @@ public class ContactsActivity extends AppCompatActivity{
                 Boolean wantToCloseDialog = (inputUpdate.getText().toString().trim().isEmpty());
                 // if EditText is empty disable closing on possitive button
                 if (!wantToCloseDialog) {
-                    ContactHandler testupdate = new ContactHandler(getApplicationContext());
+                    ContactHandler testupdate = new ContactHandler(getApplicationContext(),mThreadHandler);
                     testupdate.updateContact(inputUpdate.getText().toString(), nameToBeUpdated);
+                    Home.threadChange = true;
                     contactDialog.dismiss();
                     addContacts();
                 }
@@ -142,8 +147,9 @@ public class ContactsActivity extends AppCompatActivity{
         contactDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContactHandler testupdate = new ContactHandler(getApplicationContext());
+                ContactHandler testupdate = new ContactHandler(getApplicationContext(),mThreadHandler);
                 testupdate.deleteContact(nameToBeUpdated);
+                Home.threadChange = true;
                 contactDialog.dismiss();
                 addContacts();
             }

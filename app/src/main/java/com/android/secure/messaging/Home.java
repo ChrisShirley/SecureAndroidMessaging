@@ -61,6 +61,7 @@ public class Home extends AppCompatActivity
     private final Preferences preferencesHandler = new PreferencesHandler();
     private static List<Contact> contacts;
     private static List<String> messagingThreads;
+    public static boolean threadChange = false;
     private  ListView myListView;
     private ArrayAdapter<String> threadAdapter;
     private static Encrypt encrypt;
@@ -160,7 +161,12 @@ public class Home extends AppCompatActivity
                 0);
         if(mNfcAdapter!=null)
             mNfcAdapter.enableForegroundDispatch(this, pi, null, null);
-
+        if(threadChange)
+        {
+            threadChange = false;
+            threadAdapter = null;
+            updateThreads(null);
+        }
         // Check to see that the Activity started due to an Android Beam
 
     }
@@ -455,6 +461,12 @@ public class Home extends AppCompatActivity
     public void addNewThread(String name)
     {
         mThreadHandler.saveThread(name);
+        updateThreads(name);
+
+    }
+
+    public void updateThreads(String name)
+    {
         if(threadAdapter==null) {
             messagingThreads = mThreadHandler.getAllThreads();
             addThreads();

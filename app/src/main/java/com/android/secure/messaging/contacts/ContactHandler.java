@@ -3,6 +3,8 @@ package com.android.secure.messaging.contacts;
 import android.content.Context;
 
 import com.android.secure.messaging.database.DAO;
+import com.android.secure.messaging.messaging.MThreadHandler;
+
 import android.util.Log;
 import java.util.List;
 
@@ -28,7 +30,20 @@ public class ContactHandler {
             EMAIL +" text not null, "+
             PKEY +" text PRIMARY KEY not null);";
 
+    private MThreadHandler threadHandler;
+
+    public ContactHandler(Context context,MThreadHandler mThreadHandler)
+    {
+        getDAO(context);
+        threadHandler = mThreadHandler;
+    }
+
     public ContactHandler(Context context)
+    {
+        getDAO(context);
+    }
+
+    private void getDAO(Context context)
     {
         dao = new DAO(context,DATABASE_NAME,DATABASE_VERSION,CONTACT_TABLE_CREATE);
     }
@@ -55,12 +70,14 @@ public class ContactHandler {
    public void updateContact(String newName, String oldName)
     {
         dao.updateContactDatabase(newName, oldName);
+        threadHandler.updateThreadName(newName,oldName);
 
     }
 
     public void deleteContact(String deleteName)
     {
         dao.deleteContactDatabase(deleteName);
+        threadHandler.deleteThread(deleteName);
 
     }
 
